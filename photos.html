@@ -63,6 +63,9 @@
     .photo-container {
       position: relative;
       height: 80vh; /* To limit vertical spread, or use auto for full height */
+      width: 100%;
+      border: 1px solid #ccc; /* Optional: for visual debugging */
+      overflow: hidden; /* Optional: hide overflowing images */
     }
 
     /* Photos with absolute positioning for random spread */
@@ -139,7 +142,7 @@
     return { x, y };
   }
 
-  // To avoid overlap, we'll keep track of occupied areas (simplified approach)
+  // To avoid overlap, keep track of occupied areas
   const occupiedAreas = [];
 
   function isOverlapping(x, y, width, height) {
@@ -162,10 +165,9 @@
     img.src = src;
     img.className = 'photo';
 
-    // Append first to get natural width/height
+    // Append first to get natural width/height after load
     container.appendChild(img);
 
-    // Wait until image loads to get size
     img.onload = () => {
       const maxWidth = container.clientWidth;
       const maxHeight = container.clientHeight;
@@ -173,17 +175,25 @@
       const height = img.height;
       let position;
       let attempts = 0;
+
       do {
         position = getRandomPosition(maxWidth, maxHeight, width, height);
         attempts++;
       } while (isOverlapping(position.x, position.y, width, height) && attempts < 100);
 
-      // Save the position
-      occupiedAreas.push({ x: position.x, y: position.y, width, height });
-
-      // Apply position styling
-      img.style.left = position.x + 'px';
-      img.style.top = position.y + 'px';
+      if (attempts < 100) {
+        // Save the position
+        occupiedAreas.push({ x: position.x, y: position.y, width, height });
+        // Apply position styling
+        img.style.position = 'absolute';
+        img.style.left = position.x + 'px';
+        img.style.top = position.y + 'px';
+      } else {
+        // If no spot found, position it at (0,0)
+        img.style.position = 'absolute';
+        img.style.left = '0px';
+        img.style.top = '0px';
+      }
     };
 
     // Add click event for lightbox

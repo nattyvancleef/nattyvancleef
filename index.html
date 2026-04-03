@@ -11,37 +11,20 @@
       color: #1a1a1a;
     }
 
-    /* HOME Button style */
-    .home-link {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: rgba(247, 246, 244, 0.8);
-      padding: 10px 20px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
-      z-index: 10;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
     /* Navigation menu styles */
     nav {
       position: fixed;
-      top: 60px; /* Below the HOME button */
-      width: 100%;
+      top: 20px;
+      right: 20px;
       display: flex;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 10px 0;
+      align-items: center;
       z-index: 10;
     }
 
     nav ul {
       list-style: none;
       display: flex;
-      gap: 20px;
+      gap: 30px;
       margin: 0;
       padding: 0;
     }
@@ -50,15 +33,23 @@
       display: inline;
     }
 
+    /* Menu links styling */
     nav ul li a {
       text-decoration: none;
-      color: #333;
-      font-weight: bold;
-      font-size: 16px;
+      color: #fff;
+      font-size: 24px; /* bigger and sleeker */
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: filter 0.3s, mix-blend-mode 0.3s;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      backdrop-filter: none; /* no overlay background */
     }
 
+    /* Hover effect: blur and blending with hero video */
     nav ul li a:hover {
-      color: #007BFF;
+      filter: blur(1px);
+      mix-blend-mode: overlay;
     }
 
     /* HERO VIDEO AS BACKGROUND FULL PAGE */
@@ -90,16 +81,17 @@
       z-index: 1;
     }
 
+    /* Larger, sleeker font for main title */
     .hero h1 {
-      font-size: 3.5em;
+      font-size: 4em; /* bigger */
       max-width: 800px;
-      font-weight: 400;
-      line-height: 1.25;
+      font-weight: 700;
+      line-height: 1.2;
       color: #fff;
       margin: 0;
     }
 
-    /* Make small text more readable over video */
+    /* Small text styling remains same but can be adjusted if needed */
     .hero p {
       color: #fff;
       font-size: 1.2em;
@@ -132,10 +124,7 @@
 </head>
 <body>
 
-<!-- HOME Button -->
-<a href="#top" class="home-link">HOME</a>
-
-<!-- Navigation Menu -->
+<!-- Navigation Menu at Top Right -->
 <nav>
   <ul>
     <li><a href="index.html">Home</a></li>

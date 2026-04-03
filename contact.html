@@ -7,6 +7,7 @@
     body {
       margin: 0;
       font-family: "Helvetica Neue", Arial, sans-serif;
+      font-weight: 300; /* Slightly thinner font for elegance */
       background: #f7f6f4;
       color: #1a1a1a;
     }
@@ -30,9 +31,9 @@
     /* Show "NVC" text on arrow button, thinner and stretched */
     .return-arrow::after {
       content: "NVC";
-      font-weight: 300; /* Thinner font weight */
+      font-weight: 300;
       display: inline-block;
-      width: 80px; /* Increased width for stretch */
+      width: 80px;
       text-align: center;
     }
 
@@ -41,26 +42,8 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
-    /* Toggle button for hero video overlay */
-    .toggle-hero {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      font-size: 36px;
-      cursor: pointer;
-      z-index: 1000;
-      color: #fff;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 15px;
-      border-radius: 50%;
-      transition: background 0.3s;
-    }
-
-    .toggle-hero:hover {
-      background: rgba(0, 0, 0, 0.6);
-    }
-
-    section {
+    /* Style for the contact info at the bottom */
+    #contact-info {
       padding: 50px 20px;
       max-width: 600px;
       margin: auto;
@@ -77,13 +60,19 @@
       margin: 10px 0;
     }
 
-    /* Style for the hero video overlay container */
+    /* Hyperlink styles: red with underline */
+    a {
+      color: red;
+      text-decoration: underline;
+    }
+
+    /* Optional: style for the hero video overlay container (kept hidden) */
     #hero-video {
-      display: none; /* Hidden by default */
+      display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: 999; /* Behind the toggle button */
+      z-index: 999;
     }
 
     #hero-video video {
@@ -101,25 +90,13 @@
 <!-- Return arrow with "NVC" text -->
 <a href="index.html" class="return-arrow" aria-label="Return to homepage"></a>
 
-<!-- Toggle button for hero video overlay -->
-<div class="toggle-hero" onclick="toggleHeroVideo()" aria-label="Toggle Hero Video" title="Toggle Hero Video">
-  &#9658; <!-- Play symbol or change to a different icon if desired -->
-</div>
-
-<section id="contact">
+<!-- Contact info at the bottom of the page -->
+<section id="contact-info">
   <h2>Contact</h2>
   <p>Email: charliesangster@icloud.com</p>
   <p>Instagram: <a href="https://instagram.com/charliesngster" target="_blank">@charliesngster</a></p>
+  <p>YouTube: <a href="https://youtube.com/c/nattyvancleef" target="_blank">nattyvancleef</a></p>
 </section>
-
-<script>
-  function toggleHeroVideo() {
-    const heroVideo = document.getElementById('hero-video');
-    if (heroVideo) {
-      heroVideo.style.display = (heroVideo.style.display === 'block') ? 'none' : 'block';
-    }
-  }
-</script>
 
 </body>
 </html>

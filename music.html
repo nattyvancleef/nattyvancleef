@@ -15,7 +15,7 @@
       overflow-x: hidden;
     }
 
-    /* NAV */
+    /* NAV (same as photos page) */
     nav {
       position: fixed;
       top: 20px;
@@ -43,7 +43,7 @@
       filter: blur(1px);
     }
 
-    /* NVC */
+    /* NVC (top left) */
     .return-arrow {
       position: fixed;
       top: 20px;
@@ -78,12 +78,15 @@
       text-align: center;
     }
 
+    /* Adjusted font for header to reduce spacing */
     h2 {
       font-size: 24px;
       font-weight: 300;
-      letter-spacing: 4px;
+      letter-spacing: 1px; /* reduced letter spacing for less spaced out look */
+      font-family: 'Helvetica Neue', Arial, sans-serif; /* same as body for consistency */
     }
 
+    /* Changed font-family for paragraph to be more compact if needed, but default is fine */
     p {
       color: rgba(255,255,255,0.5);
       margin-bottom: 40px;
@@ -142,7 +145,7 @@
 
 <section>
   <h2>MUSIC</h2>
-  <p>Unfinished ideas, sketches, and beats.</p>
+  <p>Unfinished ideas. The bones for now...</p>
 
   <div class="track" data-audio="audio1">
     <div class="track-title">Paul and Djon</div>

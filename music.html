@@ -110,13 +110,15 @@
   <!-- Example track with visualizer -->
   <div class="track">
     <div class="track-title">Track 01 — Untitled</div>
+    <!-- Uncomment this if you want to include track 1 later
     <audio controls id="audio1" src="track1.mp3"></audio>
     <canvas id="visualizer" data-audio="audio1"></canvas>
+    -->
   </div>
 
   <div class="track">
     <div class="track-title">Paul and Djon</div>
-    <audio controls id="audio2" src="MYWEBSITE/paul_and_djon.mp3"></audio>
+    <audio controls id="audio2" src="paul_and_djon.mp3"></audio>
     <canvas id="visualizer2" data-audio="audio2"></canvas>
   </div>
 </section>
@@ -192,7 +194,6 @@
   }
 
   // Initialize visualizers
-  setupVisualizer('audio1', 'visualizer');
   setupVisualizer('audio2', 'visualizer2');
 </script>
 

@@ -10,6 +10,9 @@
       font-weight: 300; /* Slightly thinner font for elegance */
       background: #f7f6f4;
       color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     /* Return arrow styled as a keyhole with blur effect, now displaying "NVC" */
@@ -48,6 +51,7 @@
       max-width: 600px;
       margin: auto;
       text-align: center;
+      margin-top: auto; /* Pushes it down in flex layout */
     }
 
     h2 {
@@ -89,6 +93,9 @@
 
 <!-- Return arrow with "NVC" text -->
 <a href="index.html" class="return-arrow" aria-label="Return to homepage"></a>
+
+<!-- Spacer to push contact info to the bottom -->
+<div style="flex: 1;"></div>
 
 <!-- Contact info at the bottom of the page -->
 <section id="contact-info">

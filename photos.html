@@ -11,19 +11,25 @@
       color: #1a1a1a;
     }
 
-    /* Back link style */
-    .back-link {
+    /* Return arrow styled as a keyhole with blur effect */
+    .return-arrow {
       position: fixed;
       top: 20px;
       left: 20px;
-      background: rgba(247, 246, 244, 0.8);
-      padding: 10px 20px;
-      border-radius: 5px;
+      font-size: 24px;
+      color: #fff;
       text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
+      padding: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      transition: filter 0.3s, background 0.3s;
       z-index: 10;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .return-arrow:hover {
+      filter: blur(1px);
+      background: rgba(255, 255, 255, 0.3);
     }
 
     section {
@@ -65,17 +71,75 @@
 </head>
 <body>
 
-<a href="index.html" class="back-link">HOME</a>
+<!-- Return arrow as keyhole -->
+<a href="index.html" class="return-arrow" aria-label="Return to homepage">
+  &#8592;
+</a>
 
 <section id="photos">
   <h2>Photos</h2>
   <p>Selected photography work.</p>
   <div class="grid">
-    <!-- Repeat your photos here -->
+    <!-- All your images -->
     <div class="card"><img src="DSCF7323.JPEG" alt="Photo"></div>
     <div class="card"><img src="DSCF7358.JPEG" alt="Photo"></div>
     <div class="card"><img src="DSCF7478.JPEG" alt="Photo"></div>
-    <!-- ... more images ... -->
+    <div class="card"><img src="DSCF7484.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7494.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7501.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7509.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7515.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7523.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7529.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7537.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7544.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7553.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7564.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7572.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7580.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7589.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7597.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7604.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7614.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7624.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7634.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7644.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7654.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7664.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7674.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7684.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7694.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7704.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7714.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7724.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7734.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7744.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7754.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7764.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7774.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7784.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7794.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7804.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7814.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7824.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7834.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7844.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7854.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7864.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7874.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7884.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7894.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7904.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7914.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7924.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7934.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7944.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7954.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7964.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7974.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7984.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7994.JPEG" alt="Photo"></div>
+    <!-- Add more images as needed -->
   </div>
 </section>
 

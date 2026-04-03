@@ -32,14 +32,14 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
-    /* New toggle arrow for hero video overlay */
+    /* Toggle button for hero video overlay */
     .toggle-hero {
       position: fixed;
       top: 20px;
       right: 20px;
       font-size: 36px;
       cursor: pointer;
-      z-index: 1000; /* Ensure it appears above other content */
+      z-index: 1000;
       color: #fff;
       background: rgba(0, 0, 0, 0.4);
       padding: 15px;
@@ -68,6 +68,7 @@
       line-height: 1.6;
     }
 
+    /* Grid layout for photos */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -75,19 +76,55 @@
       margin-top: 40px;
     }
 
+    /* Style for each photo card */
     .card {
       border-radius: 10px;
       overflow: hidden;
-      border: 1px solid #ccc;
+      border: 2px solid #ccc; /* Uniform border for all images */
+      cursor: pointer; /* Indicate clickable images */
+      background: #fff; /* Optional: background for the card */
     }
 
+    /* Make images responsive and fit container */
     .card img {
       width: 100%;
       height: auto;
       display: block;
+      border-radius: 10px; /* Match container border radius */
+      transition: transform 0.3s; /* Optional: smooth zoom effect on hover */
     }
 
-    /* Optional: Style for the hero video overlay container */
+    /* Optional: add zoom effect on hover */
+    .card img:hover {
+      transform: scale(1.02);
+    }
+
+    /* Style for the full-size image overlay ("lightbox") */
+    #lightbox {
+      display: none; /* Hidden by default */
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    #lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    #lightbox img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Style for the hero video overlay container */
     #hero-video {
       display: none; /* Hidden by default */
       position: fixed;
@@ -108,6 +145,11 @@
   <video src="your-hero-video.mp4" autoplay muted loop></video>
 </div>
 
+<!-- Lightbox overlay for full-size images -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img src="" alt="Enlarged photo" />
+</div>
+
 <!-- Return arrow as keyhole -->
 <a href="index.html" class="return-arrow" aria-label="Return to homepage">
   &#8592;
@@ -115,7 +157,7 @@
 
 <!-- Toggle button for hero video overlay -->
 <div class="toggle-hero" onclick="toggleHeroVideo()" aria-label="Toggle Hero Video" title="Toggle Hero Video">
-  &#9658; <!-- Play symbol or change to a different icon if desired -->
+  &#9658; <!-- Play symbol -->
 </div>
 
 <section id="photos">
@@ -191,6 +233,20 @@
     if (heroVideo) {
       heroVideo.style.display = (heroVideo.style.display === 'block') ? 'none' : 'block';
     }
+  }
+
+  // Lightbox functionality
+  document.querySelectorAll('.card img').forEach(img => {
+    img.addEventListener('click', () => {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = lightbox.querySelector('img');
+      lightboxImg.src = img.src;
+      lightbox.style.display = 'flex';
+    });
+  });
+
+  function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
   }
 </script>
 

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Photos - nattyvancleef</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: #f7f6f4;
+      color: #1a1a1a;
+    }
+
+    /* Back link style */
+    .back-link {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(247, 246, 244, 0.8);
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    section {
+      padding: 50px 20px;
+      max-width: 1200px;
+      margin: auto;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .card {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #ccc;
+    }
+
+    .card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">HOME</a>
+
+<section id="photos">
+  <h2>Photos</h2>
+  <p>Selected photography work.</p>
+  <div class="grid">
+    <!-- Repeat your photos here -->
+    <div class="card"><img src="DSCF7323.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7358.JPEG" alt="Photo"></div>
+    <div class="card"><img src="DSCF7478.JPEG" alt="Photo"></div>
+    <!-- ... more images ... -->
+  </div>
+</section>
+
+</body>
+</html>

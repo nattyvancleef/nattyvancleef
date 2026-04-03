@@ -65,19 +65,19 @@
       margin-top: 40px;
     }
 
-    /* Photo card without borders or overlay */
+    /* Photo card without borders or overlay, no border-radius now */
     .card {
-      border-radius: 10px;
       overflow: hidden;
       cursor: pointer; /* Indicate clickable images */
       background: transparent;
     }
 
+    /* Remove border-radius from images to have sharp edges */
     .card img {
       width: 100%;
       height: auto;
       display: block;
-      border-radius: 10px; /* Keep rounded corners */
+      /* border-radius: 10px; */ /* Removed to avoid curved edges */
     }
 
     /* Lightbox for enlarged images */
@@ -95,10 +95,9 @@
     #lightbox img {
       max-width: 90%;
       max-height: 90%;
-      border-radius: 10px;
+      /* border-radius: 10px; */ /* Remove border-radius for sharp edges */
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
       cursor: pointer;
-      /* Removed hover zoom effect for less animation on click */
     }
   </style>
 </head>

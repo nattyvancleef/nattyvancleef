@@ -12,10 +12,10 @@
       font-family: 'Helvetica Neue', Arial, sans-serif;
       background: #f7f6f4;
       color: #1a1a1a;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
-    /* NAV (consistent across site) */
+    /* NAV */
     nav {
       position: fixed;
       top: 20px;
@@ -32,7 +32,7 @@
     }
 
     nav a {
-      color: #fff; /* stays white over video */
+      color: #fff;
       text-decoration: none;
       font-size: 24px;
       font-weight: 300;
@@ -43,7 +43,7 @@
       filter: blur(1px);
     }
 
-    /* NVC (match other pages) */
+    /* NVC */
     .return-arrow {
       position: fixed;
       top: 20px;
@@ -55,15 +55,11 @@
       z-index: 10;
     }
 
-    /* HERO VIDEO BACKGROUND */
+    /* VIDEO BACKGROUND */
     .hero-background {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      z-index: -1;
+      inset: 0;
+      z-index: -2;
     }
 
     .hero-background video {
@@ -72,43 +68,40 @@
       object-fit: cover;
     }
 
-    /* subtle dark overlay for readability (important fix) */
     .hero-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.25);
-      z-index: 0;
+      z-index: -1;
     }
 
-    section {
-      padding: 120px 20px;
-      max-width: 900px;
-      margin: auto;
-      text-align: center;
-      position: relative;
-      z-index: 1;
+    /* ERROR WINDOWS */
+    .window {
+      position: absolute;
+      width: 260px;
+      background: #fff;
+      color: #000;
+      border: 1px solid #ccc;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 5;
     }
 
-    h2 {
-      font-size: 24px;
-      font-weight: 300;
-      letter-spacing: 1px;
-      color: #fff;
+    .title-bar {
+      background: #eaeaea;
+      padding: 5px 10px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
     }
 
-    p {
-      color: rgba(255,255,255,0.7);
-      font-size: 14px;
-      margin-bottom: 40px;
-    }
-
-    .video-container video {
+    .video-box video {
       width: 100%;
-      max-width: 800px;
+      display: block;
     }
 
-    @media (max-width:600px){
-      nav a { font-size:18px; }
+    .close {
+      font-weight: bold;
     }
 
   </style>
@@ -127,26 +120,55 @@
   </ul>
 </nav>
 
-<!-- Background Video -->
 <div class="hero-background">
   <video autoplay muted loop playsinline>
-    <source src="waterbabiesnvc.mp4" type="video/mp4" />
+    <source src="waterbabiesnvc.mp4" type="video/mp4">
   </video>
 </div>
 
-<!-- Overlay for contrast -->
 <div class="hero-overlay"></div>
 
-<section>
-  <h2>VIDEOS</h2>
-  <p>Selected video work.</p>
+<script>
+const videos = [
+  "daily commute.mp4",
+  "fishdicks.mp4",
+  "dogdogbigone_2.mp4",
+  "nvc.mp4",
+  "bts.mp4",
+  "You've been Framed.mp4",
+  "Startedstealing.mp4"
+];
 
-  <div class="video-container">
-    <video autoplay muted loop playsinline>
-      <source src="waterbabiesnvc.mp4" type="video/mp4" />
-    </video>
-  </div>
-</section>
+const YT_LINK = "https://youtube.com/c/nattyvancleef";
+
+videos.forEach((src, i) => {
+  const win = document.createElement("div");
+  win.className = "window";
+
+  // random position
+  win.style.top = Math.random() * (window.innerHeight - 200) + "px";
+  win.style.left = Math.random() * (window.innerWidth - 260) + "px";
+
+  win.innerHTML = `
+    <div class="title-bar">
+      <span>Error_${i+1}.mp4</span>
+      <span class="close">✕</span>
+    </div>
+    <div class="video-box">
+      <video muted autoplay loop playsinline>
+        <source src="${src}" type="video/mp4">
+      </video>
+    </div>
+  `;
+
+  // click = go to youtube
+  win.addEventListener("click", () => {
+    window.open(YT_LINK, "_blank");
+  });
+
+  document.body.appendChild(win);
+});
+</script>
 
 </body>
 </html>

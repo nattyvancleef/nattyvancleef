@@ -3,106 +3,129 @@
 <head>
   <title>Contact - nattyvancleef</title>
   <meta charset="UTF-8" />
+
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300&display=swap');
+
     body {
       margin: 0;
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-weight: 300; /* Slightly thinner font for elegance */
-      background: #f7f6f4;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 300;
+      background: #f7f6f4; /* KEEPING your original background */
       color: #1a1a1a;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* Return arrow styled as a keyhole with blur effect, now displaying "NVC" */
+    /* NAV (same as music page) */
+    nav {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: #1a1a1a; /* adjusted for light background */
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 300;
+      transition: filter 0.3s;
+    }
+
+    nav a:hover {
+      filter: blur(1px);
+    }
+
+    /* NVC (top left, same style as music page) */
     .return-arrow {
       position: fixed;
       top: 20px;
       left: 20px;
-      font-size: 24px;
-      color: #fff;
+      color: #1a1a1a;
       text-decoration: none;
-      padding: 10px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(4px);
-      transition: filter 0.3s, background 0.3s;
+      font-size: 14px;
+      letter-spacing: 2px;
       z-index: 10;
     }
 
-    /* Show "NVC" text on arrow button, thinner and stretched */
-    .return-arrow::after {
-      content: "NVC";
-      font-weight: 300;
-      display: inline-block;
-      width: 80px;
-      text-align: center;
-    }
-
-    .return-arrow:hover {
-      filter: blur(1px);
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Style for the contact info at the bottom */
-    #contact-info {
-      padding: 50px 20px;
-      max-width: 600px;
+    section {
+      padding: 120px 20px;
+      max-width: 700px;
       margin: auto;
       text-align: center;
-      margin-top: auto; /* Pushes it down in flex layout */
     }
 
     h2 {
-      font-size: 2em;
-      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 300;
+      letter-spacing: 1px;
     }
 
     p {
-      font-size: 1.2em;
-      margin: 10px 0;
+      color: rgba(0,0,0,0.6);
+      margin: 15px 0;
+      font-size: 14px;
     }
 
-    /* Hyperlink styles: red with underline */
-    a {
-      color: red;
-      text-decoration: underline;
+    a.link {
+      color: #000;
+      text-decoration: none;
+      transition: filter 0.3s;
     }
 
-    /* Optional: style for the hero video overlay container (kept hidden) */
-    #hero-video {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 999;
+    a.link:hover {
+      filter: blur(1px);
     }
 
-    #hero-video video {
-      width: 100%; height: 100%; object-fit: cover;
+    @media (max-width:600px){
+      nav a { font-size:18px; }
     }
+
   </style>
 </head>
+
 <body>
 
-<!-- Hero Video Overlay (hidden by default) -->
-<div id="hero-video">
-  <video src="your-hero-video.mp4" autoplay muted loop playsinline></video>
-</div>
+<a href="index.html" class="return-arrow">NVC</a>
 
-<!-- Return arrow with "NVC" text -->
-<a href="index.html" class="return-arrow" aria-label="Return to homepage"></a>
+<nav>
+  <ul>
+    <li><a href="photos.html">Photos</a></li>
+    <li><a href="videos.html">Videos</a></li>
+    <li><a href="music.html">Music</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
 
-<!-- Spacer to push contact info to the bottom -->
-<div style="flex: 1;"></div>
+<section>
+  <h2>CONTACT</h2>
+  <p>Open to work, collaborations, or just a conversation.</p>
 
-<!-- Contact info at the bottom of the page -->
-<section id="contact-info">
-  <h2>Contact</h2>
-  <p>Email: charliesangster@icloud.com</p>
-  <p>Instagram: <a href="https://instagram.com/charliesngster" target="_blank">@charliesngster</a></p>
-  <p>YouTube: <a href="https://youtube.com/c/nattyvancleef" target="_blank">nattyvancleef</a></p>
+  <p>Email:<br>
+    <a class="link" href="mailto:charliesangster@icloud.com">
+      charliesangster@icloud.com
+    </a>
+  </p>
+
+  <p>Instagram:<br>
+    <a class="link" href="https://instagram.com/charliesngster" target="_blank">
+      @charliesngster
+    </a>
+  </p>
+
+  <p>YouTube:<br>
+    <a class="link" href="https://youtube.com/c/nattyvancleef" target="_blank">
+      nattyvancleef
+    </a>
+  </p>
 </section>
 
 </body>

@@ -5,11 +5,13 @@
 <title>Music - nattyvancleef</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300&display=swap');
+
 body {
   margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
   background: #000;
   color: #fff;
-  font-family: Helvetica, Arial, sans-serif;
   overflow: hidden;
 }
 
@@ -18,6 +20,7 @@ nav {
   position: fixed;
   top: 20px;
   right: 20px;
+  z-index: 10;
 }
 nav ul {
   display: flex;
@@ -25,17 +28,24 @@ nav ul {
   list-style: none;
 }
 nav a {
-  color: white;
+  color: #fff;
   text-decoration: none;
-  font-size: 22px;
+  font-size: 24px;
+  font-weight: 300;
+}
+nav a:hover {
+  filter: blur(1px);
 }
 
 .return-arrow {
   position: fixed;
   top: 20px;
   left: 20px;
-  color: white;
+  color: #fff;
   text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 2px;
+  z-index: 10;
 }
 
 /* CANVAS */
@@ -44,20 +54,31 @@ canvas {
   inset: 0;
 }
 
-/* SLIDERS */
-#seekSlider {
-  position: fixed;
-  bottom: 10px;
-  width: 70%;
-  left: 15%;
+/* TRACK UI */
+.track-ui {
+  position: absolute;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  width: 130px;
+  font-size: 12px;
 }
 
-#pageSlider {
-  position: fixed;
-  bottom: 40px;
-  width: 200px;
-  left: 50%;
-  transform: translateX(-50%);
+.progress {
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  margin-top: 5px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: white;
+}
+
+.time {
+  font-size: 10px;
+  opacity: 0.6;
+  text-align: right;
 }
 </style>
 </head>
@@ -76,8 +97,6 @@ canvas {
 </nav>
 
 <canvas id="canvas"></canvas>
-<input type="range" id="pageSlider" min="0" max="1" step="1" value="0">
-<input type="range" id="seekSlider" min="0" max="100" value="0">
 
 <script>
 const canvas = document.getElementById("canvas");
@@ -91,152 +110,150 @@ window.addEventListener("resize", () => {
   h = canvas.height = window.innerHeight;
 });
 
-/* ================= SONG DATA ================= */
+/* ⭐ STARFIELD */
+let stars = Array.from({length: 150}, () => ({
+  x: Math.random()*w,
+  y: Math.random()*h,
+  r: Math.random()*2,
+  speed: Math.random()*0.3
+}));
 
-const pages = [
-[
+/* SONGS */
+const songs = [
 { name:"Paul and Djon", src:"paul and djon.mp3" },
 { name:"Almostblue", src:"Almostbloue.mp3" },
 { name:"Architecture", src:"Architecture2.mp3" },
 { name:"bailey", src:"bailey3.mp3" },
 { name:"BODYOFME", src:"BODYOFME RM.mp3" },
 { name:"deathproof", src:"deathproof2.mp3" }
-],
-[
-{ name:"keep your word", src:"Keep Your Word.mp3" },
-{ name:"pawnshop.bt", src:"pawnshop.bt.mp3" },
-{ name:"said she", src:"said she.2.mp3" },
-{ name:"stickman", src:"stickman.mp3" },
-{ name:"vikingsaga", src:"vikingsaga.mp3" }
-]
 ];
 
-let currentPage = 0;
-
-/* ================= AUDIO ================= */
+const radius = 180;
 
 let currentAudio = null;
-
-/* ================= VISUAL ================= */
-
-let rotation = 0;
+let currentIndex = null;
 let hovered = null;
-let zoom = 0;
 
-const colors = [
-"#ff3b3b","#00d4ff","#ffd93b",
-"#8aff3b","#ff7af6","#3b8aff"
-];
+/* CREATE UI */
+songs.forEach((s,i)=>{
+  const ui = document.createElement("div");
+  ui.className = "track-ui";
+  ui.innerHTML = `
+    <div>${s.name}</div>
+    <div class="progress"><div class="progress-bar"></div></div>
+    <div class="time">0:00</div>
+  `;
+  document.body.appendChild(ui);
+  s.ui = ui;
+  s.bar = ui.querySelector(".progress-bar");
+  s.time = ui.querySelector(".time");
+});
 
-/* ================= DRAW ================= */
-
-function draw() {
+/* DRAW */
+function draw(){
   requestAnimationFrame(draw);
   ctx.clearRect(0,0,w,h);
 
-  rotation += 0.002;
+  /* stars */
+  stars.forEach(s=>{
+    s.y += s.speed;
+    if(s.y > h) s.y = 0;
+    ctx.fillStyle="white";
+    ctx.fillRect(s.x,s.y,s.r,s.r);
+  });
 
-  const songs = pages[currentPage];
   const step = Math.PI*2 / songs.length;
-
-  ctx.save();
-  ctx.translate(w/2, h/2);
-  ctx.rotate(rotation);
 
   songs.forEach((s,i)=>{
     const angle = i*step;
-    const r = 180;
-
-    let x = Math.cos(angle)*r;
-    let y = Math.sin(angle)*r;
+    let x = w/2 + Math.cos(angle)*radius;
+    let y = h/2 + Math.sin(angle)*radius;
 
     let size = 25;
 
-    if (hovered === i) size = 35;
+    if(i === hovered) size = 35;
+    if(i === currentIndex) size = 45;
 
-    // PLANET
+    /* PLANET */
     ctx.beginPath();
     ctx.arc(x,y,size,0,Math.PI*2);
-    ctx.fillStyle = colors[i%colors.length];
-    ctx.shadowBlur = hovered===i ? 20 : 0;
-    ctx.shadowColor = colors[i%colors.length];
+    ctx.fillStyle = ["#ff3b3b","#00d4ff","#ffd93b","#8aff3b","#ff7af6","#3b8aff"][i%6];
+    ctx.shadowBlur = (i===hovered)?20:0;
+    ctx.shadowColor = "white";
     ctx.fill();
 
-    // RING
-    ctx.beginPath();
-    ctx.ellipse(x,y,size+10,8,0.5,0,Math.PI*2);
-    ctx.strokeStyle = "white";
-    ctx.stroke();
-
-    // TEXT
     ctx.shadowBlur = 0;
-    ctx.fillStyle="yellow";
-    ctx.textAlign="center";
-    ctx.fillText(s.name,x,y+50);
 
-    // STORE position for click
-    s._x = x;
-    s._y = y;
+    /* CRATERS */
+    for(let j=0;j<3;j++){
+      ctx.fillStyle="rgba(0,0,0,0.2)";
+      ctx.beginPath();
+      ctx.arc(x-10+Math.random()*20,y-10+Math.random()*20,3,0,Math.PI*2);
+      ctx.fill();
+    }
+
+    /* GAS CLOUD */
+    ctx.fillStyle="rgba(255,255,255,0.1)";
+    ctx.beginPath();
+    ctx.arc(x+5,y-5,size*0.6,0,Math.PI*2);
+    ctx.fill();
+
+    /* RING */
+    if(i%2===0){
+      ctx.beginPath();
+      ctx.ellipse(x,y,size+12,10,0.5,0,Math.PI*2);
+      ctx.strokeStyle="white";
+      ctx.stroke();
+    }
+
+    /* UI POSITION */
+    s.ui.style.left = x+"px";
+    s.ui.style.top = (y+60)+"px";
+
+    s.x = x;
+    s.y = y;
   });
-
-  ctx.restore();
 }
-
 draw();
 
-/* ================= MOUSE ================= */
-
+/* HOVER */
 canvas.addEventListener("mousemove", e=>{
-  const mx = e.clientX - w/2;
-  const my = e.clientY - h/2;
-
   hovered = null;
-
-  const songs = pages[currentPage];
-
   songs.forEach((s,i)=>{
-    const dx = mx - s._x;
-    const dy = my - s._y;
-    if (Math.hypot(dx,dy) < 30) hovered = i;
+    if(Math.hypot(e.clientX-s.x, e.clientY-s.y)<30){
+      hovered = i;
+    }
   });
 });
 
-canvas.addEventListener("click", ()=>{
-  if (hovered === null) return;
+/* CLICK */
+canvas.addEventListener("click", e=>{
+  songs.forEach((s,i)=>{
+    if(Math.hypot(e.clientX-s.x, e.clientY-s.y)<30){
 
-  const song = pages[currentPage][hovered];
+      if(currentIndex === i){
+        currentAudio.pause();
+        currentIndex = null;
+        return;
+      }
 
-  if (currentAudio) currentAudio.pause();
+      if(currentAudio) currentAudio.pause();
 
-  currentAudio = new Audio(song.src);
-  currentAudio.play();
+      currentAudio = new Audio(s.src);
+      currentAudio.play();
+      currentIndex = i;
 
-  zoom = hovered;
+      currentAudio.ontimeupdate = ()=>{
+        const p = currentAudio.currentTime/currentAudio.duration;
+        s.bar.style.width = (p*100)+"%";
+
+        let m = Math.floor(currentAudio.currentTime/60);
+        let sec = Math.floor(currentAudio.currentTime%60).toString().padStart(2,"0");
+        s.time.textContent = `${m}:${sec}`;
+      };
+    }
+  });
 });
-
-/* ================= SLIDERS ================= */
-
-document.getElementById("pageSlider").addEventListener("input", e=>{
-  currentPage = parseInt(e.target.value);
-});
-
-const seek = document.getElementById("seekSlider");
-
-function updateSeek(){
-  if(currentAudio){
-    seek.max = currentAudio.duration || 0;
-    seek.value = currentAudio.currentTime;
-  }
-  requestAnimationFrame(updateSeek);
-}
-updateSeek();
-
-seek.addEventListener("input", ()=>{
-  if(currentAudio){
-    currentAudio.currentTime = seek.value;
-  }
-});
-
 </script>
 
 </body>

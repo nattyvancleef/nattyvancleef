@@ -42,15 +42,13 @@ nav a:hover { filter: blur(1px); }
   color: #fff;
   text-decoration: none;
   font-size: 14px;
-  letter-spacing: 2px;
-  z-index: 10;
 }
 
-/* TRACK UI */
+/* UI */
 .track-ui {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 130px;
+  width: 140px;
   text-align: center;
   font-size: 12px;
 }
@@ -61,25 +59,40 @@ nav a:hover { filter: blur(1px); }
   margin-top: 5px;
   cursor: pointer;
 }
-
 .progress-bar {
   height: 100%;
   width: 0%;
   background: white;
 }
-
 .time {
   font-size: 10px;
   opacity: 0.6;
   text-align: right;
 }
 
-/* SLIDER */
-#pageSlider {
+/* arrows */
+.arrow {
   position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 80px;
+  font-size: 28px;
+  cursor: pointer;
+  user-select: none;
+}
+#leftArrow { left: 45%; }
+#rightArrow { right: 45%; }
+
+/* zoom overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+.overlay.active {
+  opacity: 1;
+  pointer-events: all;
 }
 </style>
 </head>
@@ -97,8 +110,12 @@ nav a:hover { filter: blur(1px); }
 </ul>
 </nav>
 
+<div id="leftArrow" class="arrow">←</div>
+<div id="rightArrow" class="arrow">→</div>
+
+<div class="overlay" id="overlay"></div>
+
 <canvas id="canvas"></canvas>
-<input type="range" id="pageSlider" min="0" max="2" step="1" value="0">
 
 <script>
 const canvas = document.getElementById("canvas");
@@ -112,53 +129,47 @@ window.addEventListener("resize", () => {
   h = canvas.height = window.innerHeight;
 });
 
-/* ⭐ PARALLAX STARS */
+/* PARALLAX STARS */
 const layers = [
-  {count:60, speed:0.2, size:1},
-  {count:40, speed:0.5, size:2},
-  {count:25, speed:1, size:3}
+  {count:60,speed:0.2,size:1},
+  {count:40,speed:0.5,size:2},
+  {count:25,speed:1,size:3}
 ];
 
-let stars = layers.map(layer =>
-  Array.from({length:layer.count},()=>({
+let stars = layers.map(l =>
+  Array.from({length:l.count},()=>({
     x:Math.random()*w,
     y:Math.random()*h
   }))
 );
 
-/* SONG PAGES */
+/* SONGS */
 const pages = [
 [
-{ name:"Paul and Djon", src:"paul and djon.mp3" },
-{ name:"Almostblue", src:"Almostbloue.mp3" },
-{ name:"Architecture", src:"Architecture2.mp3" },
-{ name:"bailey", src:"bailey3.mp3" },
-{ name:"BODYOFME", src:"BODYOFME RM.mp3" },
-{ name:"deathproof", src:"deathproof2.mp3" }
+{ name:"Paul and Djon", src:"paul and djon.mp3", type:"lava" },
+{ name:"Almostblue", src:"Almostbloue.mp3", type:"ice" },
+{ name:"Architecture", src:"Architecture2.mp3", type:"gas" },
+{ name:"bailey", src:"bailey3.mp3", type:"rock" },
+{ name:"BODYOFME", src:"BODYOFME RM.mp3", type:"toxic" },
+{ name:"deathproof", src:"deathproof2.mp3", type:"ocean" }
 ],
 [
-{ name:"track 7", src:"" },
-{ name:"track 8", src:"" },
-{ name:"track 9", src:"" },
-{ name:"track 10", src:"" }
-],
-[
-{ name:"track 11", src:"" },
-{ name:"track 12", src:"" }
+{ name:"track 7", src:"", type:"lava" },
+{ name:"track 8", src:"", type:"ice" }
 ]
 ];
 
 let currentPage = 0;
 let currentAudio = null;
 let currentIndex = null;
-let hovered = null;
+let zoomed = null;
 
-/* UI */
+/* UI BUILD */
 function buildUI(){
   document.querySelectorAll(".track-ui").forEach(e=>e.remove());
 
   pages[currentPage].forEach(s=>{
-    const ui = document.createElement("div");
+    const ui=document.createElement("div");
     ui.className="track-ui";
     ui.innerHTML=`
       <div>${s.name}</div>
@@ -166,45 +177,75 @@ function buildUI(){
       <div class="time">0:00</div>
     `;
     document.body.appendChild(ui);
+
     s.ui=ui;
     s.bar=ui.querySelector(".progress-bar");
     s.time=ui.querySelector(".time");
 
-    // SCRUB
-    ui.querySelector(".progress").addEventListener("click", e=>{
+    ui.querySelector(".progress").addEventListener("click",e=>{
       if(!currentAudio) return;
-      const rect = e.target.getBoundingClientRect();
-      const percent = (e.clientX-rect.left)/rect.width;
-      currentAudio.currentTime = percent * currentAudio.duration;
+      const rect=e.target.getBoundingClientRect();
+      const p=(e.clientX-rect.left)/rect.width;
+      currentAudio.currentTime=p*currentAudio.duration;
     });
   });
 }
 buildUI();
 
-/* DRAW PIXEL PLANET */
-function drawPlanet(x,y,size,color){
-  const step=4;
+/* PLANET DRAWERS */
+function drawPlanet(x,y,size,type){
 
-  for(let i=-size;i<size;i+=step){
-    for(let j=-size;j<size;j+=step){
-      if(i*i+j*j < size*size){
-        let shade = Math.random()*0.2;
-        ctx.fillStyle=color;
-        ctx.fillRect(x+i,y+j,step,step);
-
-        // shadow side
-        if(i<0){
-          ctx.fillStyle="rgba(0,0,0,0.2)";
-          ctx.fillRect(x+i,y+j,step,step);
-        }
-
-        // highlight
-        if(i>0 && j<0){
-          ctx.fillStyle="rgba(255,255,255,0.15)";
-          ctx.fillRect(x+i,y+j,step,step);
-        }
-      }
+  if(type==="lava"){
+    ctx.fillStyle="#ff3b3b";
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle="orange";
+    for(let i=0;i<5;i++){
+      ctx.beginPath();
+      ctx.moveTo(x-size/2+Math.random()*size,y-size/2+Math.random()*size);
+      ctx.lineTo(x-size/2+Math.random()*size,y-size/2+Math.random()*size);
+      ctx.stroke();
     }
+  }
+
+  if(type==="ice"){
+    ctx.fillStyle="#aeeaff";
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle="white";
+    ctx.fillRect(x-5,y-5,10,2);
+  }
+
+  if(type==="gas"){
+    ctx.fillStyle="#ffd93b";
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle="rgba(255,255,255,0.4)";
+    for(let i=0;i<3;i++){
+      ctx.beginPath();
+      ctx.arc(x,y,size-i*5,0,Math.PI);
+      ctx.stroke();
+    }
+  }
+
+  if(type==="rock"){
+    ctx.fillStyle="#888";
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle="#555";
+    ctx.beginPath(); ctx.arc(x-5,y-5,5,0,Math.PI*2); ctx.fill();
+  }
+
+  if(type==="toxic"){
+    ctx.fillStyle="#b84dff";
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle="#00ffcc";
+    ctx.fillRect(x-3,y-3,6,6);
+  }
+
+  if(type==="ocean"){
+    ctx.fillStyle="#3b8aff";
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle="white";
+    ctx.beginPath();
+    ctx.arc(x,y,size-5,0,Math.PI);
+    ctx.stroke();
   }
 }
 
@@ -213,61 +254,49 @@ function draw(){
   requestAnimationFrame(draw);
   ctx.clearRect(0,0,w,h);
 
-  // stars
-  layers.forEach((layer,li)=>{
-    stars[li].forEach(s=>{
-      s.y += layer.speed;
+  layers.forEach((l,i)=>{
+    stars[i].forEach(s=>{
+      s.y+=l.speed;
       if(s.y>h) s.y=0;
-      ctx.fillStyle="white";
-      ctx.fillRect(s.x,s.y,layer.size,layer.size);
+      ctx.fillRect(s.x,s.y,l.size,l.size);
     });
   });
 
-  const songs = pages[currentPage];
-  const step = Math.PI*2 / songs.length;
-  const radius = 180;
+  const songs=pages[currentPage];
+  const step=Math.PI*2/songs.length;
+  const radius= zoomed!==null ? 0 : 180;
 
   songs.forEach((s,i)=>{
-    const angle = i*step;
-    const x = w/2 + Math.cos(angle)*radius;
-    const y = h/2 + Math.sin(angle)*radius;
+    const angle=i*step;
+    let x=w/2 + Math.cos(angle)*radius;
+    let y=h/2 + Math.sin(angle)*radius;
 
-    let size = (i===currentIndex)?35:25;
+    let size = (zoomed===i)?80:25;
 
-    drawPlanet(x,y,size,
-      ["#ff3b3b","#00d4ff","#ffd93b","#8aff3b","#ff7af6","#3b8aff"][i%6]
-    );
+    drawPlanet(x,y,size,s.type);
 
-    // ring
-    if(i%2===0){
-      ctx.beginPath();
-      ctx.ellipse(x,y,size+10,8,0.5,0,Math.PI*2);
-      ctx.strokeStyle="white";
-      ctx.stroke();
-    }
-
-    s.ui.style.left = x+"px";
-    s.ui.style.top = (y+55)+"px";
+    s.ui.style.display = (zoomed!==null && zoomed!==i) ? "none" : "block";
+    s.ui.style.left=x+"px";
+    s.ui.style.top=(y+60)+"px";
 
     s.x=x; s.y=y;
   });
 }
 draw();
 
-/* HOVER */
-canvas.addEventListener("mousemove",e=>{
-  hovered=null;
-  pages[currentPage].forEach((s,i)=>{
-    if(Math.hypot(e.clientX-s.x,e.clientY-s.y)<30){
-      hovered=i;
-    }
-  });
-});
-
 /* CLICK */
 canvas.addEventListener("click",e=>{
   pages[currentPage].forEach((s,i)=>{
     if(Math.hypot(e.clientX-s.x,e.clientY-s.y)<30){
+
+      if(zoomed===i){
+        zoomed=null;
+        document.getElementById("overlay").classList.remove("active");
+        return;
+      }
+
+      zoomed=i;
+      document.getElementById("overlay").classList.add("active");
 
       if(!s.src) return;
 
@@ -295,13 +324,16 @@ canvas.addEventListener("click",e=>{
   });
 });
 
-/* PAGE SWITCH */
-document.getElementById("pageSlider").addEventListener("input",e=>{
-  currentPage=parseInt(e.target.value);
-  currentIndex=null;
-  if(currentAudio) currentAudio.pause();
+/* ARROWS */
+document.getElementById("leftArrow").onclick=()=>{
+  currentPage = (currentPage-1+pages.length)%pages.length;
   buildUI();
-});
+};
+
+document.getElementById("rightArrow").onclick=()=>{
+  currentPage = (currentPage+1)%pages.length;
+  buildUI();
+};
 </script>
 
 </body>

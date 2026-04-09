@@ -117,7 +117,7 @@ window.addEventListener('resize', () => {
   visualizerCanvas.width = cw;
 });
 
-// =================== Data ===================
+// =================== Song Data ===================
 const songs = [
   { name: 'Paul and Djon', src: 'https://raw.githubusercontent.com/yourrepo/daily_commute.mp3', angle: 0 },
   { name: 'Almostblue', src: 'https://raw.githubusercontent.com/yourrepo/fishdicks.mp3', angle: Math.PI/3 },
@@ -136,18 +136,14 @@ songs.forEach(s => {
 });
 
 // =================== Variables ===================
-let wheelRotation = 0;
-let isDragging = false;
-let lastX = 0;
 let currentAudio = null;
-let currentTrack = null;
 
-// =================== Draw wheel (static) ===================
+// =================== Draw static wheel ===================
 function drawWheel() {
   ctx.clearRect(0, 0, cw, ch);
   ctx.save();
   ctx.translate(cw/2, ch/2);
-  ctx.rotate(wheelRotation); // if you want static, you can comment this out
+  ctx.rotate(0); // static, not spinning
   const radius = 150;
   songs.forEach(s => {
     const x = Math.cos(s.angle) * radius;
@@ -156,16 +152,16 @@ function drawWheel() {
     ctx.arc(x, y, 20, 0, Math.PI*2);
     ctx.fillStyle = 'white';
     ctx.fill();
+
     ctx.fillStyle = 'yellow';
     ctx.font = '12px Helvetica Neue';
     ctx.fillText(s.name, x - 20, y + 35);
   });
   ctx.restore();
-  requestAnimationFrame(drawWheel);
 }
 drawWheel();
 
-// =================== Animate visualizer (optional) ===================
+// =================== Animate visualizer ===================
 let angle = 0;
 function animateVisualizer() {
   requestAnimationFrame(animateVisualizer);
@@ -182,12 +178,12 @@ function animateVisualizer() {
 }
 animateVisualizer();
 
-// =================== Interaction: click circles ===================
+// =================== Click on wheel to select song ===================
 circleCanvas.addEventListener('click', (e) => {
   const rect = circleCanvas.getBoundingClientRect();
   const x = e.clientX - rect.left - cw/2;
   const y = e.clientY - rect.top - ch/2;
-  const clickAngle = Math.atan2(y, x) - wheelRotation;
+  const clickAngle = Math.atan2(y, x);
 
   // Find closest song
   let minDiff = Math.PI;
@@ -201,19 +197,19 @@ circleCanvas.addEventListener('click', (e) => {
     }
   });
   if (selectedSong) {
-    // Play selected song
+    // Stop previous song if playing
     if (currentAudio) {
       currentAudio.pause();
     }
+    // Play selected song
     const audioId = 'audio_' + selectedSong.name.replace(/\s+/g, '_');
     currentAudio = document.getElementById(audioId);
-    currentAudio.currentTime = 0;
-    currentAudio.play();
+    if (currentAudio) {
+      currentAudio.currentTime = 0;
+      currentAudio.play();
+    }
   }
 });
-
-// =================== Remove drag to spin ===================
-// (Just comment out or delete the drag event listeners for static wheel)
 
 // =================== Slider control ===================
 const seekSlider = document.getElementById('seekSlider');

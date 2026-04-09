@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300&display=swap');
+    @import url('httpshttps://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300&display=swap');
 
     body {
       margin: 0;
@@ -81,9 +81,10 @@
       background: #000;
       border: 1px solid rgba(255,255,255,0.1);
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      cursor: pointer;
+      cursor: grab;
       z-index: 5;
       transition: transform 0.2s ease;
+      user-select: none; /* Prevent text selection while dragging */
     }
 
     .window:hover {
@@ -94,7 +95,6 @@
       width: 100%;
       display: block;
     }
-
   </style>
 </head>
 
@@ -113,7 +113,7 @@
 
 <div class="hero-background">
   <video autoplay muted loop playsinline>
-    <source src="waterbabiesnvc.mp4" type="video/mp4">
+    <source src="waterbabiesnvc.mp4" type="video/mp4" />
   </video>
 </div>
 
@@ -134,30 +134,4 @@ const YT_LINK = "https://youtube.com/c/nattyvancleef";
 
 videos.forEach((src) => {
   const win = document.createElement("div");
-  win.className = "window";
-
-  // keep windows inside viewport
-  const maxTop = window.innerHeight - 180;
-  const maxLeft = window.innerWidth - 260;
-
-  win.style.top = Math.random() * maxTop + "px";
-  win.style.left = Math.random() * maxLeft + "px";
-
-  win.innerHTML = `
-    <div class="video-box">
-      <video muted autoplay loop playsinline>
-        <source src="${src}" type="video/mp4">
-      </video>
-    </div>
-  `;
-
-  win.addEventListener("click", () => {
-    window.open(YT_LINK, "_blank");
-  });
-
-  document.body.appendChild(win);
-});
-</script>
-
-</body>
-</html>
+  win.class

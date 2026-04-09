@@ -1,127 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Music - nattyvancleef</title>
-  <meta charset="UTF-8" />
-  <style>
-    /* ... (your existing styles) ... */
-    body { margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background: #000; color: #fff; overflow-x: hidden; }
-    #circleCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      cursor: grab;
-    }
-    .visualiser {
-      width: 100%;
-      height: 60px;
-    }
-    #seekSlider {
-      width: 80%;
-      margin: 20px auto;
-      display: block;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Music - nattyvancleef</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #000;
+    overflow: hidden;
+  }
+  #circleCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    cursor: grab;
+  }
+  #seekSlider {
+    position: fixed;
+    bottom: 10px;
+    width: 80%;
+    left: 10%;
+    z-index: 3;
+  }
+  .visualiser {
+    width: 100%;
+    height: 60px;
+    display: block;
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+    z-index: 3;
+  }
+  /* Optional: add navigation or other styles as needed */
+</style>
 </head>
 <body>
 
 <canvas id="circleCanvas"></canvas>
-<div style="position:fixed; bottom:10px; width:100%; text-align:center; z-index:3;">
-  <input type="range" id="seekSlider" min="0" max="100" value="0" step="0.1"/>
-</div>
+<input type="range" id="seekSlider" min="0" max="100" value="0" step="0.1"/>
 
-<!-- Your existing content ... -->
-<!-- (keep your existing section with tracks) -->
+<canvas class="visualiser"></canvas>
 
 <script>
+// Set up canvases
 const circleCanvas = document.getElementById('circleCanvas');
 const ctx = circleCanvas.getContext('2d');
+const visualizerCanvas = document.querySelector('.visualiser');
+const vCtx = visualizerCanvas.getContext('2d');
+
 let cw = window.innerWidth;
 let ch = window.innerHeight;
 circleCanvas.width = cw;
 circleCanvas.height = ch;
+visualizerCanvas.width = cw;
+visualizerCanvas.height = 60;
 
 window.addEventListener('resize', () => {
   cw = window.innerWidth;
   ch = window.innerHeight;
   circleCanvas.width = cw;
   circleCanvas.height = ch;
+  visualizerCanvas.width = cw;
 });
 
-// Define tracks for circular wheel
+// Define tracks
 const tracks = [
-  { name: 'Paul and Djon', audioId: 'audio1', angle: 0 },
-  { name: 'Almostbloue', audioId: 'audio2', angle: Math.PI / 4 },
-  { name: 'Architecture', audioId: 'audio3', angle: Math.PI / 2 },
-  { name: 'bailey', audioId: 'audio4', angle: 3 * Math.PI / 4 },
-  { name: 'BODYOFME', audioId: 'audio5', angle: Math.PI },
-  { name: 'deathproof', audioId: 'audio6', angle: 5 * Math.PI / 4 },
-  { name: 'keep your word', audioId: 'audio7', angle: 3 * Math.PI / 2 },
-  { name: 'pawnshop.bt', audioId: 'audio8', angle: 7 * Math.PI / 4 },
-  { name: 'said she', audioId: 'audio9', angle: 9 * Math.PI / 4 },
-  { name: 'stickman', audioId: 'audio10', angle: 10 * Math.PI / 4 },
-  { name: 'vikingsaga', audioId: 'audio11', angle: 11 * Math.PI / 4 },
+  { name: 'Track 1', audioId: 'audio1', angle: 0 },
+  { name: 'Track 2', audioId: 'audio2', angle: Math.PI/3 },
+  { name: 'Track 3', audioId: 'audio3', angle: 2*Math.PI/3 },
+  { name: 'Track 4', audioId: 'audio4', angle: Math.PI },
+  { name: 'Track 5', audioId: 'audio5', angle: 4*Math.PI/3 },
+  { name: 'Track 6', audioId: 'audio6', angle: 5*Math.PI/3 }
 ];
 
-let wheelRotation = 0; // for dragging
+// Create dummy audio elements
+tracks.forEach(t => {
+  const a = document.createElement('audio');
+  a.id = t.audioId;
+  a.src = 'https://www.w3schools.com/html/horse.mp3'; // Placeholder mp3
+  document.body.appendChild(a);
+});
+
+let wheelRotation = 0;
 let isDragging = false;
 let lastX = 0;
-let currentTrack = null;
 let currentAudio = null;
+let currentTrack = null;
 
-// Draw the circular wheel
+// Draw wheel
 function drawWheel() {
   ctx.clearRect(0, 0, cw, ch);
   ctx.save();
   ctx.translate(cw/2, ch/2);
   ctx.rotate(wheelRotation);
-
-  const radius = 150; // radius of wheel
+  const radius = 150;
   tracks.forEach(track => {
-    const angle = track.angle;
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
-
+    const x = Math.cos(track.angle) * radius;
+    const y = Math.sin(track.angle) * radius;
     ctx.beginPath();
-    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    ctx.arc(x, y, 20, 0, Math.PI*2);
     ctx.fillStyle = 'white';
     ctx.fill();
-
     ctx.fillStyle = 'yellow';
     ctx.font = '12px Helvetica Neue';
     ctx.fillText(track.name, x - 20, y + 35);
   });
-
   ctx.restore();
-
   requestAnimationFrame(drawWheel);
 }
+drawWheel();
 
-// Animate the visualizer (more movement)
-const visualizerCanvas = document.querySelector('.visualiser');
-const vCtx = visualizerCanvas.getContext('2d');
-let vWidth = visualizerCanvas.clientWidth;
-let vHeight = visualizerCanvas.clientHeight;
-
-function resizeVisualizer() {
-  vWidth = visualizerCanvas.clientWidth;
-  vHeight = visualizerCanvas.clientHeight;
-  visualizerCanvas.width = vWidth;
-  visualizerCanvas.height = vHeight;
-}
-window.addEventListener('resize', resizeVisualizer);
-
+// Animate visualizer
 let angle = 0;
-
 function animateVisualizer() {
   requestAnimationFrame(animateVisualizer);
-  vCtx.clearRect(0, 0, vWidth, vHeight);
-  // Create moving circles or waveforms for more movement
-  for (let i = 0; i < 5; i++) {
-    const x = vWidth/2 + Math.sin(angle + i) * (vWidth/3);
-    const y = vHeight/2 + Math.cos(angle + i) * (vHeight/3);
+  vCtx.clearRect(0, 0, cw, 60);
+  for (let i=0; i<5; i++) {
+    const x = cw/2 + Math.sin(angle + i) * (cw/3);
+    const y = 30 + Math.cos(angle + i) * 10;
     vCtx.beginPath();
-    vCtx.arc(x, y, 10 + Math.sin(angle + i*2)*5, 0, Math.PI*2);
+    vCtx.arc(x, y, 10+Math.sin(angle + i*2)*5, 0, Math.PI*2);
     vCtx.fillStyle = `rgba(255,255,255,${0.2 + Math.sin(angle + i)*0.3})`;
     vCtx.fill();
   }
@@ -129,27 +128,27 @@ function animateVisualizer() {
 }
 animateVisualizer();
 
-// Drag interactions for wheel
+// Drag to rotate wheel
 circleCanvas.addEventListener('mousedown', (e) => {
   isDragging = true;
   lastX = e.clientX;
 });
-circleCanvas.addEventListener('mouseup', () => { isDragging = false; });
-circleCanvas.addEventListener('mousemove', (e) => {
+window.addEventListener('mouseup', () => { isDragging = false; });
+window.addEventListener('mousemove', (e) => {
   if (isDragging) {
     const deltaX = e.clientX - lastX;
-    wheelRotation += deltaX * 0.01; // control speed
+    wheelRotation += deltaX * 0.01;
     lastX = e.clientX;
   }
 });
 
-// Touch controls
+// Touch support
 circleCanvas.addEventListener('touchstart', (e) => {
   isDragging = true;
   lastX = e.touches[0].clientX;
 });
-circleCanvas.addEventListener('touchend', () => { isDragging = false; });
-circleCanvas.addEventListener('touchmove', (e) => {
+window.addEventListener('touchend', () => { isDragging = false; });
+window.addEventListener('touchmove', (e) => {
   if (isDragging) {
     const deltaX = e.touches[0].clientX - lastX;
     wheelRotation += deltaX * 0.01;
@@ -157,20 +156,15 @@ circleCanvas.addEventListener('touchmove', (e) => {
   }
 });
 
-// Detect click on a track
-circleCanvas.addEventListener('click', () => {
-  // Find closest track to pointer
+// Detect click on wheel
+circleCanvas.addEventListener('click', (e) => {
   const rect = circleCanvas.getBoundingClientRect();
-  const centerX = rect.left + cw/2;
-  const centerY = rect.top + ch/2;
-  const mouseX = event.clientX - rect.left - cw/2;
-  const mouseY = event.clientY - rect.top - ch/2;
+  const x = e.clientX - rect.left - cw/2;
+  const y = e.clientY - rect.top - ch/2;
+  const clickAngle = Math.atan2(y, x) - wheelRotation;
 
-  // Calculate angle of click
-  const clickAngle = Math.atan2(mouseY, mouseX) - wheelRotation;
-
-  let closestTrack = null;
   let minDiff = Math.PI;
+  let closestTrack = null;
   tracks.forEach(track => {
     let diff = Math.abs(track.angle - clickAngle);
     if (diff > Math.PI) diff = Math.abs(diff - 2*Math.PI);
@@ -180,31 +174,23 @@ circleCanvas.addEventListener('click', () => {
     }
   });
   if (closestTrack) {
-    // Play the track
     selectTrack(closestTrack);
   }
 });
 
-// Select and play track
+// Play selected track
 function selectTrack(track) {
-  // Pause previous
   if (currentAudio) {
     currentAudio.pause();
   }
-
-  // Set current track
   currentAudio = document.getElementById(track.audioId);
   currentAudio.currentTime = 0;
   currentAudio.play();
-  // Update active class for your UI if needed
-  document.querySelectorAll('.track').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.track[data-audio="${track.audioId}"]`).classList.add('active');
-
-  // Set current track reference
+  // Update active class or highlight if needed
   currentTrack = track;
 }
 
-// Slider control for current track
+// Update seek slider
 const seekSlider = document.getElementById('seekSlider');
 
 function updateSlider() {
@@ -214,21 +200,18 @@ function updateSlider() {
   }
   requestAnimationFrame(updateSlider);
 }
-requestAnimationFrame(updateSlider);
+updateSlider();
 
 seekSlider.addEventListener('input', () => {
   if (currentAudio) {
     currentAudio.currentTime = seekSlider.value;
   }
 });
-
-// Sync slider with current track
-currentAudio && currentAudio.addEventListener('timeupdate', () => {
-  seekSlider.value = currentAudio.currentTime;
-});
-
-// Initialize drawing
-drawWheel();
+if (currentAudio) {
+  currentAudio.addEventListener('timeupdate', () => {
+    seekSlider.value = currentAudio.currentTime;
+  });
+}
 </script>
 
 </body>

@@ -1,217 +1,330 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>Music - nattyvancleef</title>
-<style>
-  body {
-    margin: 0;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background: #000;
-    overflow: hidden;
-  }
-  #circleCanvas {
-    position: fixed;
-    inset: 0;
-    z-index: 2;
-    cursor: grab;
-  }
-  #seekSlider {
-    position: fixed;
-    bottom: 10px;
-    width: 80%;
-    left: 10%;
-    z-index: 3;
-  }
-  .visualiser {
-    width: 100%;
-    height: 60px;
-    display: block;
-    position: fixed;
-    bottom: 50px;
-    left: 0;
-    z-index: 3;
-  }
-  /* Optional: add navigation or other styles as needed */
-</style>
+  <title>Music - nattyvancleef</title>
+  <meta charset="UTF-8" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 300;
+      transition: filter 0.3s;
+    }
+
+    nav a:hover {
+      filter: blur(1px);
+    }
+
+    .return-arrow {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: 2px;
+      z-index: 10;
+    }
+
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+    }
+
+    .nebula {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(120,120,150,0.07), transparent 60%),
+        radial-gradient(circle at 70% 60%, rgba(100,100,130,0.05), transparent 70%);
+      z-index: -1;
+    }
+
+    section {
+      padding: 100px 20px;
+      max-width: 700px;
+      margin: auto;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    p {
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+
+    .track {
+      margin-bottom: 70px;
+      cursor: pointer;
+    }
+
+    .track-title {
+      font-size: 18px;
+      font-weight: 300;
+      margin-bottom: 6px;
+    }
+
+    .track.active .track-title {
+      opacity: 0.6;
+    }
+
+    .time {
+      font-size: 13px;
+      opacity: 0.5;
+      margin-bottom: 10px;
+    }
+
+    canvas.visualiser {
+      width: 100%;
+      height: 60px;
+    }
+  </style>
 </head>
+
 <body>
 
-<canvas id="circleCanvas"></canvas>
-<input type="range" id="seekSlider" min="0" max="100" value="0" step="0.1"/>
+<div class="nebula"></div>
+<canvas id="stars"></canvas>
 
-<canvas class="visualiser"></canvas>
+<a href="index.html" class="return-arrow">NVC</a>
+
+<nav>
+  <ul>
+    <li><a href="photos.html">Photos</a></li>
+    <li><a href="videos.html">Videos</a></li>
+    <li><a href="music.html">Music</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<section>
+  <h2>MUSIC</h2>
+  <p>Unfinished ideas. The bones for now...</p>
+
+  <!-- Replace 'your-github-raw-url/' with your actual raw URL path -->
+  <div class="track" data-audio="audio1">
+    <div class="track-title">Paul and Djon</div>
+    <div class="time">0:00</div>
+    <audio id="audio1" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/paul%20and%20djon.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio2">
+    <div class="track-title">Almostbloue</div>
+    <div class="time">0:00</div>
+    <audio id="audio2" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/Almostbloue.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio3">
+    <div class="track-title">Architecture</div>
+    <div class="time">0:00</div>
+    <audio id="audio3" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/Architecture2.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio4">
+    <div class="track-title">bailey</div>
+    <div class="time">0:00</div>
+    <audio id="audio4" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/bailey3.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio5">
+    <div class="track-title">BODYOFME</div>
+    <div class="time">0:00</div>
+    <audio id="audio5" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/BODYOFME%20RM.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio6">
+    <div class="track-title">deathproof</div>
+    <div class="time">0:00</div>
+    <audio id="audio6" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/deathproof2.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio7">
+    <div class="track-title">keep your word</div>
+    <div class="time">0:00</div>
+    <audio id="audio7" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/Keep%20Your%20Word.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio8">
+    <div class="track-title">pawnshop.bt</div>
+    <div class="time">0:00</div>
+    <audio id="audio8" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/pawnshop.bt.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio9">
+    <div class="track-title">said she</div>
+    <div class="time">0:00</div>
+    <audio id="audio9" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/said%20she.2.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio10">
+    <div class="track-title">stickman</div>
+    <div class="time">0:00</div>
+    <audio id="audio10" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/stickman%20.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio11">
+    <div class="track-title">vikingsaga</div>
+    <div class="time">0:00</div>
+    <audio id="audio11" src="https://raw.githubusercontent.com/your-username/your-repo/branch/your-path/vikingsaga.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+</section>
 
 <script>
-// Set up canvases
-const circleCanvas = document.getElementById('circleCanvas');
-const ctx = circleCanvas.getContext('2d');
-const visualizerCanvas = document.querySelector('.visualiser');
-const vCtx = visualizerCanvas.getContext('2d');
-
-let cw = window.innerWidth;
-let ch = window.innerHeight;
-circleCanvas.width = cw;
-circleCanvas.height = ch;
-visualizerCanvas.width = cw;
-visualizerCanvas.height = 60;
-
-window.addEventListener('resize', () => {
-  cw = window.innerWidth;
-  ch = window.innerHeight;
-  circleCanvas.width = cw;
-  circleCanvas.height = ch;
-  visualizerCanvas.width = cw;
-});
-
-// Define tracks
-const tracks = [
-  { name: 'Track 1', audioId: 'audio1', angle: 0 },
-  { name: 'Track 2', audioId: 'audio2', angle: Math.PI/3 },
-  { name: 'Track 3', audioId: 'audio3', angle: 2*Math.PI/3 },
-  { name: 'Track 4', audioId: 'audio4', angle: Math.PI },
-  { name: 'Track 5', audioId: 'audio5', angle: 4*Math.PI/3 },
-  { name: 'Track 6', audioId: 'audio6', angle: 5*Math.PI/3 }
-];
-
-// Create dummy audio elements
-tracks.forEach(t => {
-  const a = document.createElement('audio');
-  a.id = t.audioId;
-  a.src = 'https://www.w3schools.com/html/horse.mp3'; // Placeholder mp3
-  document.body.appendChild(a);
-});
-
-let wheelRotation = 0;
-let isDragging = false;
-let lastX = 0;
+// Your JavaScript code remains the same
 let currentAudio = null;
-let currentTrack = null;
+let locked = false;
 
-// Draw wheel
-function drawWheel() {
-  ctx.clearRect(0, 0, cw, ch);
-  ctx.save();
-  ctx.translate(cw/2, ch/2);
-  ctx.rotate(wheelRotation);
-  const radius = 150;
-  tracks.forEach(track => {
-    const x = Math.cos(track.angle) * radius;
-    const y = Math.sin(track.angle) * radius;
+document.querySelectorAll('.track').forEach(track => {
+  const audio = document.getElementById(track.dataset.audio);
+  const timeDisplay = track.querySelector('.time');
+  const canvas = track.querySelector('.visualiser');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audio) return;
+  const source = audioCtx.createMediaElementSource(audio);
+  const analyser = audioCtx.createAnalyser();
+
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  analyser.fftSize = 128;
+
+  const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(dataArray);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
-    ctx.arc(x, y, 20, 0, Math.PI*2);
-    ctx.fillStyle = 'white';
-    ctx.fill();
-    ctx.fillStyle = 'yellow';
-    ctx.font = '12px Helvetica Neue';
-    ctx.fillText(track.name, x - 20, y + 35);
-  });
-  ctx.restore();
-  requestAnimationFrame(drawWheel);
-}
-drawWheel();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#d0d6ff";
 
-// Animate visualizer
-let angle = 0;
-function animateVisualizer() {
-  requestAnimationFrame(animateVisualizer);
-  vCtx.clearRect(0, 0, cw, 60);
-  for (let i=0; i<5; i++) {
-    const x = cw/2 + Math.sin(angle + i) * (cw/3);
-    const y = 30 + Math.cos(angle + i) * 10;
-    vCtx.beginPath();
-    vCtx.arc(x, y, 10+Math.sin(angle + i*2)*5, 0, Math.PI*2);
-    vCtx.fillStyle = `rgba(255,255,255,${0.2 + Math.sin(angle + i)*0.3})`;
-    vCtx.fill();
+    const mid = canvas.height / 2;
+    const sliceWidth = canvas.width / dataArray.length;
+
+    let x = 0;
+
+    for (let i = 0; i < dataArray.length; i++) {
+      let v = (dataArray[i] - 128) / 128;
+      let y = mid + v * (canvas.height * 0.2);
+
+      if (i === 0 || i === dataArray.length - 1) y = mid;
+
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+
+      x += sliceWidth;
+    }
+
+    ctx.stroke();
   }
-  angle += 0.02;
-}
-animateVisualizer();
 
-// Drag to rotate wheel
-circleCanvas.addEventListener('mousedown', (e) => {
-  isDragging = true;
-  lastX = e.clientX;
-});
-window.addEventListener('mouseup', () => { isDragging = false; });
-window.addEventListener('mousemove', (e) => {
-  if (isDragging) {
-    const deltaX = e.clientX - lastX;
-    wheelRotation += deltaX * 0.01;
-    lastX = e.clientX;
-  }
-});
+  audio.onplay = () => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    draw();
+  };
 
-// Touch support
-circleCanvas.addEventListener('touchstart', (e) => {
-  isDragging = true;
-  lastX = e.touches[0].clientX;
-});
-window.addEventListener('touchend', () => { isDragging = false; });
-window.addEventListener('touchmove', (e) => {
-  if (isDragging) {
-    const deltaX = e.touches[0].clientX - lastX;
-    wheelRotation += deltaX * 0.01;
-    lastX = e.touches[0].clientX;
-  }
-});
+  track.addEventListener('click', () => {
+    if (currentAudio && currentAudio !== audio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      document.querySelectorAll('.track').forEach(t => t.classList.remove('active'));
+    }
 
-// Detect click on wheel
-circleCanvas.addEventListener('click', (e) => {
-  const rect = circleCanvas.getBoundingClientRect();
-  const x = e.clientX - rect.left - cw/2;
-  const y = e.clientY - rect.top - ch/2;
-  const clickAngle = Math.atan2(y, x) - wheelRotation;
-
-  let minDiff = Math.PI;
-  let closestTrack = null;
-  tracks.forEach(track => {
-    let diff = Math.abs(track.angle - clickAngle);
-    if (diff > Math.PI) diff = Math.abs(diff - 2*Math.PI);
-    if (diff < minDiff) {
-      minDiff = diff;
-      closestTrack = track;
+    if (audio.paused) {
+      audio.play();
+      currentAudio = audio;
+      locked = true;
+      track.classList.add('active');
+    } else {
+      audio.pause();
+      locked = false;
+      track.classList.remove('active');
     }
   });
-  if (closestTrack) {
-    selectTrack(closestTrack);
-  }
-});
 
-// Play selected track
-function selectTrack(track) {
-  if (currentAudio) {
-    currentAudio.pause();
-  }
-  currentAudio = document.getElementById(track.audioId);
-  currentAudio.currentTime = 0;
-  currentAudio.play();
-  // Update active class or highlight if needed
-  currentTrack = track;
-}
-
-// Update seek slider
-const seekSlider = document.getElementById('seekSlider');
-
-function updateSlider() {
-  if (currentAudio && currentAudio.duration) {
-    seekSlider.max = currentAudio.duration;
-    seekSlider.value = currentAudio.currentTime;
-  }
-  requestAnimationFrame(updateSlider);
-}
-updateSlider();
-
-seekSlider.addEventListener('input', () => {
-  if (currentAudio) {
-    currentAudio.currentTime = seekSlider.value;
-  }
-});
-if (currentAudio) {
-  currentAudio.addEventListener('timeupdate', () => {
-    seekSlider.value = currentAudio.currentTime;
+  track.addEventListener('mouseenter', () => {
+    if (!locked) {
+      audio.currentTime = 0;
+      audio.play();
+    }
   });
-}
+
+  track.addEventListener('mouseleave', () => {
+    if (!locked) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    if (!audio.duration) return;
+    let remaining = audio.duration - audio.currentTime;
+    let mins = Math.floor(remaining / 60);
+    let secs = Math.floor(remaining % 60).toString().padStart(2,'0');
+    timeDisplay.textContent = `${mins}:${secs}`;
+  });
+
+  audio.addEventListener('ended', () => {
+    timeDisplay.textContent = "0:00";
+    track.classList.remove('active');
+    locked = false;
+  });
+});
 </script>
 
 </body>

@@ -1,62 +1,328 @@
-<div class="track" data-audio="audio3">
-  <div class="track-title">Architecture</div>
-  <div class="time">0:00</div>
-  <audio id="audio3" src="Architecture2.mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Music - nattyvancleef</title>
+  <meta charset="UTF-8" />
 
-<div class="track" data-audio="audio4">
-  <div class="track-title">bailey</div>
-  <div class="time">0:00</div>
-  <audio id="audio4" src="bailey3.mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300&display=swap');
 
-<div class="track" data-audio="audio5">
-  <div class="track-title">BODYOFME</div>
-  <div class="time">0:00</div>
-  <audio id="audio5" src="BODYOFME RM.mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+    body {
+      margin: 0;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
+    }
 
-<div class="track" data-audio="audio6">
-  <div class="track-title">deathproof</div>
-  <div class="time">0:00</div>
-  <audio id="audio6" src="deathproof2.mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+    nav {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+    }
 
-<div class="track" data-audio="audio7">
-  <div class="track-title">keep your word</div>
-  <div class="time">0:00</div>
-  <audio id="audio7" src="Keep Your Word.mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+    nav ul {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
 
-<div class="track" data-audio="audio8">
-  <div class="track-title">pawnshop.bt</div>
-  <div class="time">0:00</div>
-  <audio id="audio8" src="pawnshop.bt.mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 300;
+      transition: filter 0.3s;
+    }
 
-<div class="track" data-audio="audio9">
-  <div class="track-title">said she</div>
-  <div class="time">0:00</div>
-  <audio id="audio9" src="said she.2.mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+    nav a:hover {
+      filter: blur(1px);
+    }
 
-<div class="track" data-audio="audio10">
-  <div class="track-title">stickman</div>
-  <div class="time">0:00</div>
-  <audio id="audio10" src="stickman .mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+    .return-arrow {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: 2px;
+      z-index: 10;
+    }
 
-<div class="track" data-audio="audio11">
-  <div class="track-title">vikingsaga</div>
-  <div class="time">0:00</div>
-  <audio id="audio11" src="vikingsaga.mp3"></audio>
-  <canvas class="visualiser"></canvas>
-</div>
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+    }
+
+    .nebula {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(120,120,150,0.07), transparent 60%),
+        radial-gradient(circle at 70% 60%, rgba(100,100,130,0.05), transparent 70%);
+      z-index: -1;
+    }
+
+    section {
+      padding: 100px 20px;
+      max-width: 700px;
+      margin: auto;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    p {
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+
+    .track {
+      margin-bottom: 70px;
+      cursor: pointer;
+    }
+
+    .track-title {
+      font-size: 18px;
+      font-weight: 300;
+      margin-bottom: 6px;
+    }
+
+    .track.active .track-title {
+      opacity: 0.6;
+    }
+
+    .time {
+      font-size: 13px;
+      opacity: 0.5;
+      margin-bottom: 10px;
+    }
+
+    canvas.visualiser {
+      width: 100%;
+      height: 60px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="nebula"></div>
+<canvas id="stars"></canvas>
+
+<a href="index.html" class="return-arrow">NVC</a>
+
+<nav>
+  <ul>
+    <li><a href="photos.html">Photos</a></li>
+    <li><a href="videos.html">Videos</a></li>
+    <li><a href="music.html">Music</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<section>
+  <h2>MUSIC</h2>
+  <p>Unfinished ideas. The bones for now...</p>
+
+  <div class="track" data-audio="audio1">
+    <div class="track-title">Paul and Djon</div>
+    <div class="time">0:00</div>
+    <audio id="audio1" src="paul and djon.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio2">
+    <div class="track-title">Almostbloue</div>
+    <div class="time">0:00</div>
+    <audio id="audio2" src="Almostbloue.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio3">
+    <div class="track-title">Architecture</div>
+    <div class="time">0:00</div>
+    <audio id="audio3" src="Architecture2.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio4">
+    <div class="track-title">bailey</div>
+    <div class="time">0:00</div>
+    <audio id="audio4" src="bailey3.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio5">
+    <div class="track-title">BODYOFME</div>
+    <div class="time">0:00</div>
+    <audio id="audio5" src="BODYOFME RM.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio6">
+    <div class="track-title">deathproof</div>
+    <div class="time">0:00</div>
+    <audio id="audio6" src="deathproof2.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio7">
+    <div class="track-title">keep your word</div>
+    <div class="time">0:00</div>
+    <audio id="audio7" src="Keep Your Word.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio8">
+    <div class="track-title">pawnshop.bt</div>
+    <div class="time">0:00</div>
+    <audio id="audio8" src="pawnshop.bt.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio9">
+    <div class="track-title">said she</div>
+    <div class="time">0:00</div>
+    <audio id="audio9" src="said she.2.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio10">
+    <div class="track-title">stickman</div>
+    <div class="time">0:00</div>
+    <audio id="audio10" src="stickman .mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+  <div class="track" data-audio="audio11">
+    <div class="track-title">vikingsaga</div>
+    <div class="time">0:00</div>
+    <audio id="audio11" src="vikingsaga.mp3"></audio>
+    <canvas class="visualiser"></canvas>
+  </div>
+
+</section>
+
+<script>
+let currentAudio = null;
+let locked = false;
+
+document.querySelectorAll('.track').forEach(track => {
+  const audio = document.getElementById(track.dataset.audio);
+  const timeDisplay = track.querySelector('.time');
+  const canvas = track.querySelector('.visualiser');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioCtx.createMediaElementSource(audio);
+  const analyser = audioCtx.createAnalyser();
+
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  analyser.fftSize = 128;
+
+  const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(dataArray);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#d0d6ff";
+
+    const mid = canvas.height / 2;
+    const sliceWidth = canvas.width / dataArray.length;
+
+    let x = 0;
+
+    for (let i = 0; i < dataArray.length; i++) {
+      let v = (dataArray[i] - 128) / 128;
+      let y = mid + v * (canvas.height * 0.2);
+
+      if (i === 0 || i === dataArray.length - 1) y = mid;
+
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+
+      x += sliceWidth;
+    }
+
+    ctx.stroke();
+  }
+
+  audio.onplay = () => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    draw();
+  };
+
+  track.addEventListener('click', () => {
+    if (currentAudio && currentAudio !== audio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      document.querySelectorAll('.track').forEach(t => t.classList.remove('active'));
+    }
+
+    if (audio.paused) {
+      audio.play();
+      currentAudio = audio;
+      locked = true;
+      track.classList.add('active');
+    } else {
+      audio.pause();
+      locked = false;
+      track.classList.remove('active');
+    }
+  });
+
+  track.addEventListener('mouseenter', () => {
+    if (!locked) {
+      audio.currentTime = 0;
+      audio.play();
+    }
+  });
+
+  track.addEventListener('mouseleave', () => {
+    if (!locked) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    if (!audio.duration) return;
+    let remaining = audio.duration - audio.currentTime;
+    let mins = Math.floor(remaining / 60);
+    let secs = Math.floor(remaining % 60).toString().padStart(2,'0');
+    timeDisplay.textContent = `${mins}:${secs}`;
+  });
+
+  audio.addEventListener('ended', () => {
+    timeDisplay.textContent = "0:00";
+    track.classList.remove('active');
+    locked = false;
+  });
+});
+</script>
+
+</body>
+</html>

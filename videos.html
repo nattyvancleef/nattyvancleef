@@ -3,6 +3,7 @@
 <head>
   <title>Videos - nattyvancleef</title>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300&display=swap');
@@ -100,6 +101,36 @@
       width: 100%;
       display: block;
     }
+
+    /* ========================= */
+    /* MOBILE — MATCH INDEX EXACT */
+    /* ========================= */
+
+    @media (max-width:600px){
+
+      nav {
+        top:20px;
+        right:20px;
+      }
+
+      nav ul {
+        gap:24px;
+      }
+
+      nav a {
+        font-size:48px; /* MATCH INDEX */
+      }
+
+      .return-arrow {
+        top:20px;
+        left:20px;
+        font-size:32px; /* MATCH INDEX */
+        letter-spacing:3px;
+        opacity:0.6;
+      }
+
+    }
+
   </style>
 </head>
 
@@ -212,13 +243,11 @@ function focusWindow(target) {
       win.style.top = centerY + "px";
       win.classList.add("focused");
 
-      // UNMUTE + PLAY ON FOCUS
       video.muted = false;
       video.volume = 1;
       video.play();
 
     } else {
-      // mute others
       video.muted = true;
 
       const dx = x - target.dataset.x;

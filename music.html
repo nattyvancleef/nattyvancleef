@@ -5,11 +5,13 @@
 <title>Music - nattyvancleef</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300&display=swap');
+
 body {
   margin: 0;
-  background: #000;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background: #0a0a0a;
   color: #fff;
-  font-family: Helvetica, Arial, sans-serif;
   overflow: hidden;
 }
 
@@ -20,24 +22,51 @@ nav {
   right: 20px;
   z-index: 10;
 }
+
 nav ul {
   display: flex;
   gap: 30px;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
+
 nav a {
   color: #fff;
   text-decoration: none;
   font-size: 24px;
+  font-weight: 300;
+  transition: filter 0.3s;
 }
-nav a:hover { filter: blur(1px); }
+
+nav a:hover {
+  filter: blur(1px);
+}
 
 .return-arrow {
   position: fixed;
   top: 20px;
   left: 20px;
-  color: white;
+  color: #fff;
   text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 2px;
+  opacity: 0.6;
+  z-index: 10;
+}
+
+/* overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+.overlay.active {
+  opacity: 1;
+  pointer-events: all;
 }
 
 /* UI */
@@ -47,17 +76,12 @@ nav a:hover { filter: blur(1px); }
   width: 140px;
   text-align: center;
   font-size: 12px;
-  transition: 0.2s;
-}
-
-.track-ui:hover {
-  opacity: 0.7;
 }
 
 .progress {
-  height: 5px;
+  height: 4px;
   background: rgba(255,255,255,0.2);
-  margin-top: 5px;
+  margin-top: 6px;
   cursor: pointer;
 }
 .progress-bar {
@@ -65,34 +89,11 @@ nav a:hover { filter: blur(1px); }
   width: 0%;
   background: white;
 }
+
 .time {
   font-size: 10px;
   opacity: 0.6;
   text-align: right;
-}
-
-/* arrows */
-.arrow {
-  position: fixed;
-  bottom: 160px;
-  font-size: 22px;
-  cursor: pointer;
-}
-#leftArrow { left: 49%; }
-#rightArrow { right: 49%; }
-
-/* overlay */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.3s;
-}
-.overlay.active {
-  opacity: 1;
-  pointer-events: all;
 }
 </style>
 </head>
@@ -110,10 +111,7 @@ nav a:hover { filter: blur(1px); }
 </ul>
 </nav>
 
-<div id="leftArrow" class="arrow">←</div>
-<div id="rightArrow" class="arrow">→</div>
 <div id="overlay" class="overlay"></div>
-
 <canvas id="canvas"></canvas>
 
 <script>
@@ -128,154 +126,126 @@ window.addEventListener("resize", () => {
   h = canvas.height = window.innerHeight;
 });
 
-/* STARS */
-const layers = [
-  {count:60,speed:0.2,size:1},
-  {count:40,speed:0.5,size:2},
-  {count:25,speed:1,size:3}
-];
+/* AUDIO SYSTEM (Web Audio API) */
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let analyser = audioCtx.createAnalyser();
+analyser.fftSize = 256;
 
-let stars = layers.map(l =>
-  Array.from({length:l.count},()=>({
-    x:Math.random()*w,
-    y:Math.random()*h
-  }))
-);
-
-/* PAGES */
-const pages = [
-[
-{ name:"Paul and Djon", src:"paul and djon.mp3", type:"lava" },
-{ name:"Almostblue", src:"Almostbloue.mp3", type:"ice" },
-{ name:"Architecture", src:"Architecture2.mp3", type:"gas" },
-{ name:"bailey", src:"bailey3.mp3", type:"rock" },
-{ name:"BODYOFME", src:"BODYOFME RM.mp3", type:"toxic" },
-{ name:"deathproof", src:"deathproof2.mp3", type:"ocean" }
-],
-[
-{ name:"track 7", src:"", type:"lava" },
-{ name:"track 8", src:"", type:"ice" },
-{ name:"track 9", src:"", type:"gas" }
-],
-[
-{ name:"track 10", src:"", type:"rock" },
-{ name:"track 11", src:"", type:"toxic" }
-]
-];
-
-let currentPage = 0;
+let sourceNode = null;
 let currentAudio = null;
-let currentIndex = null;
-let zoomed = null;
+
+function setupAudio(audio){
+  if(sourceNode) sourceNode.disconnect();
+
+  sourceNode = audioCtx.createMediaElementSource(audio);
+  sourceNode.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
+
+/* DATA */
+const tracks = [
+{ name:"Paul and Djon", src:"paul and djon.mp3" },
+{ name:"Almostblue", src:"Almostbloue.mp3" },
+{ name:"Architecture", src:"Architecture2.mp3" },
+{ name:"bailey", src:"bailey3.mp3" }
+];
+
 let hovered = null;
+let zoomed = null;
+let angleOffsets = tracks.map(()=>0);
 
 /* UI */
 function buildUI(){
   document.querySelectorAll(".track-ui").forEach(e=>e.remove());
 
-  pages[currentPage].forEach(s=>{
+  tracks.forEach(t=>{
     const ui=document.createElement("div");
     ui.className="track-ui";
     ui.innerHTML=`
-      <div>${s.name}</div>
+      <div>${t.name}</div>
       <div class="progress"><div class="progress-bar"></div></div>
       <div class="time">0:00</div>
     `;
     document.body.appendChild(ui);
 
-    s.ui=ui;
-    s.bar=ui.querySelector(".progress-bar");
-    s.time=ui.querySelector(".time");
-
-    ui.querySelector(".progress").addEventListener("click",e=>{
-      if(!currentAudio) return;
-      const rect=e.target.getBoundingClientRect();
-      const p=(e.clientX-rect.left)/rect.width;
-      currentAudio.currentTime=p*currentAudio.duration;
-    });
+    t.ui=ui;
+    t.bar=ui.querySelector(".progress-bar");
+    t.time=ui.querySelector(".time");
   });
 }
 buildUI();
 
-/* PIXEL PLANET */
-function pixelPlanet(x,y,size,color,react=0){
-  const step=4;
+/* AUDIO DATA */
+let dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-  for(let i=-size;i<size;i+=step){
-    for(let j=-size;j<size;j+=step){
-      if(i*i+j*j < size*size){
-
-        let shade = (i+j)%8===0 ? 0.2 : 0;
-        let pulse = react * 0.5;
-
-        ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},1)`;
-        ctx.fillRect(x+i,y+j,step,step);
-
-        if(shade){
-          ctx.fillStyle="rgba(255,255,255,0.1)";
-          ctx.fillRect(x+i,y+j,step,step);
-        }
-
-        if(pulse){
-          ctx.fillStyle="rgba(255,255,255,"+pulse+")";
-          ctx.fillRect(x+i,y+j,step,step);
-        }
-      }
-    }
-  }
+function getBass(){
+  analyser.getByteFrequencyData(dataArray);
+  let sum = 0;
+  for(let i=0;i<10;i++) sum += dataArray[i];
+  return sum / 10 / 255;
 }
 
-/* DRAW */
-let time=0;
+/* VINYL DRAW */
+function drawVinyl(x, y, size, i){
 
+  let bass = getBass();
+  let wobble = bass * 8;
+
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.rotate(angleOffsets[i]);
+
+  // disc
+  ctx.beginPath();
+  ctx.arc(0,0,size + wobble,0,Math.PI*2);
+  ctx.fillStyle="#111";
+  ctx.fill();
+
+  // grooves
+  for(let r=5;r<size;r+=4){
+    ctx.beginPath();
+    ctx.arc(0,0,r,0,Math.PI*2);
+    ctx.strokeStyle="rgba(255,255,255,0.05)";
+    ctx.stroke();
+  }
+
+  // label
+  ctx.beginPath();
+  ctx.arc(0,0,size*0.3,0,Math.PI*2);
+  ctx.fillStyle="#ddd";
+  ctx.fill();
+
+  ctx.restore();
+}
+
+/* DRAW LOOP */
 function draw(){
   requestAnimationFrame(draw);
   ctx.clearRect(0,0,w,h);
-  time+=0.02;
 
-  layers.forEach((l,i)=>{
-    stars[i].forEach(s=>{
-      s.y+=l.speed;
-      if(s.y>h) s.y=0;
-      ctx.fillStyle="#fff";
-      ctx.fillRect(s.x,s.y,l.size,l.size);
-    });
-  });
-
-  const songs=pages[currentPage];
-  const step=Math.PI*2/songs.length;
   const radius = zoomed!==null ? 0 : 180;
+  const step = Math.PI*2/tracks.length;
 
-  let audioLevel = currentAudio ? Math.abs(Math.sin(time*8)) : 0;
+  tracks.forEach((t,i)=>{
 
-  songs.forEach((s,i)=>{
-    const angle=i*step;
+    let angle = i*step;
 
-    let x=w/2 + Math.cos(angle)*radius;
-    let y=h/2 + Math.sin(angle)*radius;
+    let x = w/2 + Math.cos(angle)*radius;
+    let y = h/2 + Math.sin(angle)*radius;
 
-    let size = 25;
+    let size = (zoomed===i)?100:(hovered===i?35:25);
 
-    if(hovered===i) size = 30;
-    if(zoomed===i) size = 90;
+    drawVinyl(x,y,size,i);
 
-    let react = (zoomed===i) ? audioLevel : 0;
+    t.x=x; t.y=y;
 
-    pixelPlanet(x,y,size,[255,255,255],react);
+    t.ui.style.left = x+"px";
+    t.ui.style.top = (y+60)+"px";
 
-    // glow
-    if(hovered===i){
-      ctx.shadowBlur=20;
-      ctx.shadowColor="white";
-    } else {
-      ctx.shadowBlur=0;
+    // spin if playing
+    if(currentAudio && zoomed===i){
+      angleOffsets[i] += 0.02;
     }
-
-    s.ui.style.display = (zoomed!==null && zoomed!==i) ? "none":"block";
-    s.ui.style.left=x+"px";
-    s.ui.style.top=(y+60)+"px";
-
-    s.x=x; s.y=y;
   });
 }
 draw();
@@ -283,71 +253,79 @@ draw();
 /* HOVER */
 canvas.addEventListener("mousemove",e=>{
   hovered=null;
-  pages[currentPage].forEach((s,i)=>{
-    if(Math.hypot(e.clientX-s.x,e.clientY-s.y)<30){
+
+  tracks.forEach((t,i)=>{
+    let size = (zoomed===i)?100:25;
+
+    if(Math.hypot(e.clientX-t.x,e.clientY-t.y)<size){
       hovered=i;
     }
   });
 });
 
+/* SCRATCHING */
+let dragging = false;
+
+canvas.addEventListener("mousedown",e=>{
+  if(zoomed!==null) dragging = true;
+});
+
+canvas.addEventListener("mouseup",()=> dragging=false);
+
+canvas.addEventListener("mousemove",e=>{
+  if(dragging && currentAudio){
+    currentAudio.currentTime += e.movementX * 0.01;
+    angleOffsets[zoomed] += e.movementX * 0.01;
+  }
+});
+
 /* CLICK */
 canvas.addEventListener("click", e => {
 
-  let clickedPlanet = false;
+  let clicked = false;
 
-  pages[currentPage].forEach((s,i)=>{
-    if(Math.hypot(e.clientX-s.x,e.clientY-s.y)<30){
+  tracks.forEach((t,i)=>{
+    let size = (zoomed===i)?100:30;
 
-      clickedPlanet = true;
+    if(Math.hypot(e.clientX-t.x,e.clientY-t.y)<size){
+
+      clicked = true;
 
       if(zoomed===i){
-        zoomed=null;
-        overlay.classList.remove("active");
-        if(currentAudio) currentAudio.pause();
-        currentIndex=null;
+        stopAudio();
         return;
       }
 
       zoomed=i;
       overlay.classList.add("active");
 
-      if(!s.src) return;
+      if(currentAudio) stopAudio();
 
-      if(currentAudio) currentAudio.pause();
+      let audio = new Audio(t.src);
+      setupAudio(audio);
 
-      currentAudio=new Audio(s.src);
-      currentAudio.play();
-      currentIndex=i;
-
-      currentAudio.ontimeupdate=()=>{
-        const p=currentAudio.currentTime/currentAudio.duration;
-        s.bar.style.width=(p*100)+"%";
-
-        let m=Math.floor(currentAudio.currentTime/60);
-        let sec=Math.floor(currentAudio.currentTime%60).toString().padStart(2,"0");
-        s.time.textContent=`${m}:${sec}`;
-      };
+      audio.play();
+      currentAudio = audio;
     }
   });
 
-  // click away = EXIT + STOP
-  if(!clickedPlanet && zoomed!==null){
-    zoomed=null;
-    overlay.classList.remove("active");
-    if(currentAudio) currentAudio.pause();
-    currentIndex=null;
+  if(!clicked && zoomed!==null){
+    stopAudio();
   }
 });
 
-/* ARROWS */
-leftArrow.onclick=()=>{
-  currentPage = (currentPage-1+pages.length)%pages.length;
-  buildUI();
-};
-rightArrow.onclick=()=>{
-  currentPage = (currentPage+1)%pages.length;
-  buildUI();
-};
+/* STOP */
+function stopAudio(){
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  zoomed = null;
+  overlay.classList.remove("active");
+}
+
+/* OVERLAY CLICK */
+overlay.addEventListener("click", stopAudio);
 </script>
 
 </body>

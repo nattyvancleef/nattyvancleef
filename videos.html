@@ -14,7 +14,6 @@
       overflow-x: hidden;
     }
 
-    /* NAV */
     nav {
       position: fixed;
       top: 20px;
@@ -53,7 +52,6 @@
       z-index: 10;
     }
 
-    /* BACKGROUND VIDEO */
     .hero-background {
       position: fixed;
       inset: 0;
@@ -73,13 +71,11 @@
       z-index: -1;
     }
 
-    /* CONTENT */
     .content {
       position: relative;
       height: 200vh;
     }
 
-    /* WINDOWS */
     .window {
       position: absolute;
       width: 260px;
@@ -88,11 +84,16 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       cursor: pointer;
       z-index: 5;
-      transition: transform 0.2s ease;
+      transition: transform 0.4s ease, left 0.4s ease, top 0.4s ease;
     }
 
     .window:hover {
       transform: scale(1.03);
+    }
+
+    .window.focused {
+      z-index: 20;
+      transform: scale(1.4);
     }
 
     .video-box video {
@@ -134,22 +135,20 @@ const videos = [
   "Startedstealing.mp4",
   "metal test copy.mp4",
   "Maceos copy.mp4",
-
-  // NEW VIDEOS
   "dogdogbigone_1.mp4",
   "vid_4osc333.mp4",
   "christmasbreakfast.mp4",
   "mercades.mp4",
   "Olympus.mp4",
   "golfrun.mp4",
-  "golf54.mp4"
+  "golf54.mp4",
+  "A&E.mp4",
+  "karatemountainboy.mp4"
 ];
 
-const YT_LINK = "https://www.youtube.com/channel/UC-NGnhA2zS9ltsa8-iLM-dA";
-
 const content = document.getElementById("content");
-
 const placed = [];
+const windows = [];
 
 function isOverlapping(x, y) {
   return placed.some(p => {
@@ -175,6 +174,10 @@ videos.forEach((src) => {
   } while (isOverlapping(x, y) && tries < 50);
 
   placed.push({x, y});
+  windows.push(win);
+
+  win.dataset.x = x;
+  win.dataset.y = y;
 
   win.style.left = x + "px";
   win.style.top = y + "px";
@@ -187,11 +190,55 @@ videos.forEach((src) => {
     </div>
   `;
 
-  win.addEventListener("click", () => {
-    window.open(YT_LINK, "_blank");
+  win.addEventListener("click", (e) => {
+    e.stopPropagation();
+    focusWindow(win);
   });
 
   content.appendChild(win);
+});
+
+function focusWindow(target) {
+  const centerX = window.innerWidth / 2 - 130;
+  const centerY = window.innerHeight / 2 - 90;
+
+  windows.forEach(win => {
+    win.classList.remove("focused");
+
+    let x = parseFloat(win.dataset.x);
+    let y = parseFloat(win.dataset.y);
+
+    if (win === target) {
+      win.style.left = centerX + "px";
+      win.style.top = centerY + "px";
+      win.classList.add("focused");
+    } else {
+      // distance from target
+      const dx = x - target.dataset.x;
+      const dy = y - target.dataset.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      if (dist < 300) {
+        // gentle push away
+        const push = 80;
+        const angle = Math.atan2(dy, dx);
+        x += Math.cos(angle) * push;
+        y += Math.sin(angle) * push;
+      }
+
+      win.style.left = x + "px";
+      win.style.top = y + "px";
+    }
+  });
+}
+
+// reset on background click
+document.body.addEventListener("click", () => {
+  windows.forEach(win => {
+    win.classList.remove("focused");
+    win.style.left = win.dataset.x + "px";
+    win.style.top = win.dataset.y + "px";
+  });
 });
 </script>
 

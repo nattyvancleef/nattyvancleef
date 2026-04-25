@@ -11,37 +11,53 @@
     body {
       margin: 0;
       font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: #f7f6f4;
+      color: #1a1a1a;
       overflow-x: hidden;
     }
 
+    /* NAV */
     nav {
       position: fixed;
       top: clamp(15px, 3vw, 20px);
       right: clamp(15px, 3vw, 20px);
+      z-index: 10;
     }
 
     nav ul {
       display: flex;
       gap: clamp(12px, 3vw, 30px);
       list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     nav a {
-      font-size: clamp(18px, 5vw, 48px);
       color: #fff;
       text-decoration: none;
+      font-weight: 300;
+      font-size: clamp(18px, 5vw, 48px);
+      transition: filter 0.3s;
     }
 
+    nav a:hover {
+      filter: blur(1px);
+    }
+
+    /* NVC */
     .return-arrow {
       position: fixed;
       top: clamp(15px, 3vw, 20px);
       left: clamp(15px, 3vw, 20px);
-      font-size: clamp(14px, 4vw, 32px);
       color: #fff;
-      opacity: 0.6;
+      text-decoration: none;
+      font-size: clamp(14px, 4vw, 32px);
       letter-spacing: 2px;
+      z-index: 10;
+      opacity: 0.6;
     }
 
+    /* HERO VIDEO */
     .hero-background {
       position: fixed;
       inset: 0;
@@ -61,17 +77,28 @@
       z-index: -1;
     }
 
+    /* HERO */
     .hero {
+      position: relative;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
+      padding: 0 20px;
+      z-index: 1;
     }
 
     h1 {
-      font-size: clamp(2em, 8vw, 4em);
+      font-size: clamp(2.2rem, 8vw, 4rem);
+      max-width: 900px;
+      font-weight: 300;
+      line-height: 1.2;
       color: #fff;
+      margin: 0;
+      letter-spacing: 1px;
     }
+
   </style>
 </head>
 
@@ -80,24 +107,24 @@
 <a href="index.html" class="return-arrow">NVC</a>
 
 <nav>
-<ul>
-<li><a href="photos.html">Photos</a></li>
-<li><a href="videos.html">Videos</a></li>
-<li><a href="music.html">Music</a></li>
-<li><a href="contact.html">Contact</a></li>
-</ul>
+  <ul>
+    <li><a href="photos.html">Photos</a></li>
+    <li><a href="videos.html">Videos</a></li>
+    <li><a href="music.html">Music</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
 </nav>
 
 <div class="hero-background">
-<video autoplay muted loop playsinline>
-<source src="ambshighschoolinvert.2.mp4">
-</video>
+  <video autoplay muted loop playsinline webkit-playsinline preload="auto">
+    <source src="ambshighschoolinvert.2.mp4" type="video/mp4" />
+  </video>
 </div>
 
 <div class="hero-overlay"></div>
 
 <section class="hero">
-<h1>nattyvancleef</h1>
+  <h1>nattyvancleef</h1>
 </section>
 
 </body>

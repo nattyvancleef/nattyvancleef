@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Music - nattyvancleef</title>
 
 <style>
@@ -15,7 +16,7 @@ body {
   overflow: hidden;
 }
 
-/* NAV — MATCH INDEX */
+/* NAV */
 nav {
   position: fixed;
   top: 20px;
@@ -38,7 +39,7 @@ nav a {
 }
 nav a:hover { filter: blur(1px); }
 
-/* NVC arrow — MATCH INDEX */
+/* NVC */
 .return-arrow {
   position: fixed;
   top: 20px;
@@ -51,26 +52,58 @@ nav a:hover { filter: blur(1px); }
   opacity: 0.6;
 }
 
-/* UI */
-.track-ui {
+/* JUKEBOX CONTAINER */
+.jukebox {
   position: absolute;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-size: 12px;
-  pointer-events: none;
-  width: 140px;
-  white-space: nowrap;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+/* TRACK */
+.track-ui {
+  width: min(520px, 85vw);
+  padding: 16px 18px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  background: rgba(20,20,20,0.6);
+  backdrop-filter: blur(8px);
+  font-size: 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+  position: relative;
+}
+
+.track-ui:hover {
+  transform: scale(1.02);
+  border-color: rgba(255,255,255,0.35);
+}
+
+.track-ui::before {
+  content: "▶";
+  margin-right: 10px;
+  opacity: 0.7;
+}
+
+.track-ui.playing {
+  border-color: rgba(255,255,255,0.7);
+  background: rgba(40,40,40,0.85);
 }
 
 /* arrows */
 .arrow {
   position: fixed;
-  bottom: 140px;
+  bottom: 80px;
   font-size: 22px;
   cursor: pointer;
+  user-select: none;
 }
-#leftArrow { left: 49%; }
-#rightArrow { right: 49%; }
+#leftArrow { left: 48%; }
+#rightArrow { right: 48%; }
 
 /* overlay */
 .overlay {
@@ -83,6 +116,27 @@ nav a:hover { filter: blur(1px); }
 .overlay.active {
   opacity: 1;
   pointer-events: all;
+}
+
+/* MOBILE TWEAK ONLY (same layout, just scaling) */
+@media (max-width: 600px){
+
+  nav a {
+    font-size: 20px;
+  }
+
+  .return-arrow {
+    font-size: 16px;
+  }
+
+  .track-ui {
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+
+  .arrow {
+    bottom: 60px;
+  }
 }
 </style>
 </head>
@@ -103,59 +157,10 @@ nav a:hover { filter: blur(1px); }
 <div id="leftArrow" class="arrow">←</div>
 <div id="rightArrow" class="arrow">→</div>
 <div id="overlay" class="overlay"></div>
-<canvas id="canvas"></canvas>
+
+<div class="jukebox" id="jukebox"></div>
 
 <script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-let w = canvas.width = window.innerWidth;
-let h = canvas.height = window.innerHeight;
-
-window.addEventListener("resize", () => {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-});
-
-/* STARFIELD — ORIGINAL STYLE */
-const layers = [
-  {count:60,speed:0.2,size:1},
-  {count:40,speed:0.5,size:2},
-  {count:25,speed:1,size:3}
-];
-
-let stars = layers.map(l =>
-  Array.from({length:l.count},()=>({
-    x:Math.random()*w,
-    y:Math.random()*h
-  }))
-);
-
-/* AUDIO */
-let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let analyser = audioCtx.createAnalyser();
-analyser.fftSize = 256;
-
-let currentAudio = null;
-let sourceNode = null;
-
-function setupAudio(audio){
-  if(sourceNode) sourceNode.disconnect();
-  sourceNode = audioCtx.createMediaElementSource(audio);
-  sourceNode.connect(analyser);
-  analyser.connect(audioCtx.destination);
-}
-
-let dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-function getBass(){
-  analyser.getByteFrequencyData(dataArray);
-  let sum = 0;
-  for(let i=0;i<10;i++) sum += dataArray[i];
-  return sum / 10 / 255;
-}
-
-/* TRACKS */
 const pages = [
 [
 { name:"Paul and Djon", src:"paul and djon.mp3" },
@@ -184,196 +189,73 @@ const pages = [
 ];
 
 let currentPage = 0;
-let hovered = null;
-let zoomed = null;
-let angleOffsets = [];
+let currentAudio = null;
 
-/* UI */
+const jukebox = document.getElementById("jukebox");
+
 function buildUI(){
-  document.querySelectorAll(".track-ui").forEach(e=>e.remove());
+  jukebox.innerHTML = "";
 
-  angleOffsets = pages[currentPage].map(()=>0);
+  pages[currentPage].forEach((track, i)=>{
+    const div = document.createElement("div");
+    div.className = "track-ui";
+    div.textContent = track.name;
 
-  pages[currentPage].forEach((t,i)=>{
-    const ui=document.createElement("div");
-    ui.className="track-ui";
-    ui.innerHTML = `<div>${t.name}</div>`;
-    document.body.appendChild(ui);
-    t.ui=ui;
+    div.onclick = () => playTrack(i, div);
+
+    jukebox.appendChild(div);
   });
 }
-buildUI();
 
-/* VINYL */
-function drawVinyl(x,y,size,i){
-  let bass = getBass();
-  let wobble = bass * 6;
+function playTrack(i, el){
 
-  ctx.save();
-  ctx.translate(x,y);
-  ctx.rotate(angleOffsets[i]);
+  const track = pages[currentPage][i];
 
-  ctx.beginPath();
-  ctx.arc(0,0,size+wobble,0,Math.PI*2);
-  ctx.fillStyle="#111";
-  ctx.fill();
-
-  for(let r=5;r<size;r+=4){
-    ctx.beginPath();
-    ctx.arc(0,0,r,0,Math.PI*2);
-    ctx.strokeStyle="rgba(255,255,255,0.05)";
-    ctx.stroke();
-  }
-
-  ctx.beginPath();
-  ctx.arc(0,0,size*0.3,0,Math.PI*2);
-  ctx.fillStyle="#ddd";
-  ctx.fill();
-
-  ctx.restore();
-}
-
-/* DRAW */
-function draw(){
-  requestAnimationFrame(draw);
-  ctx.clearRect(0,0,w,h);
-
-  // stars
-  layers.forEach((l,i)=>{
-    stars[i].forEach(s=>{
-      s.y+=l.speed;
-      if(s.y>h) s.y=0;
-      ctx.fillStyle="#fff";
-      ctx.fillRect(s.x,s.y,l.size,l.size);
-    });
+  document.querySelectorAll(".track-ui").forEach(t=>{
+    t.classList.remove("playing");
   });
 
-  const songs = pages[currentPage];
-  const step = Math.PI*2/songs.length;
-  const radius = zoomed!==null ? 0 : 180;
-
-  songs.forEach((s,i)=>{
-    let angle=i*step;
-
-    let x=w/2 + Math.cos(angle)*radius;
-    let y=h/2 + Math.sin(angle)*radius;
-
-    let size = (zoomed===i)?110:(hovered===i?35:25);
-
-    drawVinyl(x,y,size,i);
-
-    s.x=x; s.y=y;
-
-    // FIXED TEXT LOGIC
-    if(zoomed!==null){
-      if(zoomed===i){
-        s.ui.style.display="block";
-        s.ui.style.left=w/2+"px";
-        s.ui.style.top=(h/2 + 140)+"px";
-        s.ui.style.fontSize="14px";
-      } else {
-        s.ui.style.display="none";
-      }
-    } else {
-      s.ui.style.display="block";
-      s.ui.style.left=x+"px";
-      s.ui.style.top=(y+70)+"px";
-      s.ui.style.fontSize="12px";
-    }
-
-    if(currentAudio && zoomed===i){
-      angleOffsets[i]+=0.02;
-    }
-  });
-}
-draw();
-
-/* HOVER */
-canvas.addEventListener("mousemove",e=>{
-  hovered=null;
-
-  pages[currentPage].forEach((s,i)=>{
-    let size = (zoomed===i)?110:25;
-    if(Math.hypot(e.clientX-s.x,e.clientY-s.y)<size){
-      hovered=i;
-    }
-  });
-});
-
-/* SCRATCH */
-let dragging=false;
-
-canvas.addEventListener("mousedown",()=>{
-  if(zoomed!==null) dragging=true;
-});
-canvas.addEventListener("mouseup",()=> dragging=false);
-
-canvas.addEventListener("mousemove",e=>{
-  if(dragging && currentAudio){
-    currentAudio.currentTime += e.movementX*0.01;
-    angleOffsets[zoomed] += e.movementX*0.01;
-  }
-});
-
-/* CLICK */
-canvas.addEventListener("click",e=>{
-  let clicked=false;
-
-  pages[currentPage].forEach((s,i)=>{
-    let size=(zoomed===i)?110:30;
-
-    if(Math.hypot(e.clientX-s.x,e.clientY-s.y)<size){
-
-      clicked=true;
-
-      if(zoomed===i){
-        stopAudio();
-        return;
-      }
-
-      zoomed=i;
-      overlay.classList.add("active");
-
-      if(currentAudio) stopAudio();
-
-      if(s.src){
-        let audio=new Audio(s.src);
-        setupAudio(audio);
-        audio.play();
-        currentAudio=audio;
-      }
-    }
-  });
-
-  if(!clicked && zoomed!==null){
-    stopAudio();
-  }
-});
-
-/* ARROWS */
-leftArrow.onclick=()=>{
-  currentPage=(currentPage-1+pages.length)%pages.length;
-  stopAudio();
-  buildUI();
-};
-
-rightArrow.onclick=()=>{
-  currentPage=(currentPage+1)%pages.length;
-  stopAudio();
-  buildUI();
-};
-
-/* STOP */
-function stopAudio(){
   if(currentAudio){
     currentAudio.pause();
-    currentAudio=null;
   }
-  zoomed=null;
-  overlay.classList.remove("active");
+
+  if(track.src){
+    const audio = new Audio(track.src);
+    audio.play();
+    currentAudio = audio;
+
+    el.classList.add("playing");
+
+    overlay.classList.add("active");
+
+    audio.onended = () => {
+      overlay.classList.remove("active");
+      el.classList.remove("playing");
+    };
+  }
 }
 
-overlay.addEventListener("click",stopAudio);
+/* NAV */
+leftArrow.onclick = () => {
+  currentPage = (currentPage - 1 + pages.length) % pages.length;
+  if(currentAudio) currentAudio.pause();
+  overlay.classList.remove("active");
+  buildUI();
+};
+
+rightArrow.onclick = () => {
+  currentPage = (currentPage + 1) % pages.length;
+  if(currentAudio) currentAudio.pause();
+  overlay.classList.remove("active");
+  buildUI();
+};
+
+overlay.onclick = () => {
+  if(currentAudio) currentAudio.pause();
+  overlay.classList.remove("active");
+};
+
+buildUI();
 </script>
 
 </body>

@@ -137,5 +137,20 @@
   <h1>nattyvancleef</h1>
 </section>
 
+<!-- MOBILE AUTOPLAY FIX -->
+<script>
+  const video = document.querySelector('.hero-background video');
+
+  if (video) {
+    video.muted = true;
+    video.setAttribute('muted', '');
+    video.play().catch(() => {
+      document.addEventListener('touchstart', () => {
+        video.play();
+      }, { once: true });
+    });
+  }
+</script>
+
 </body>
 </html>

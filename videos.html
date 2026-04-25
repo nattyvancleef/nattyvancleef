@@ -168,7 +168,7 @@ const placed = [];
 const winW = () => Math.min(Math.max(window.innerWidth * 0.38, 160), 260);
 const winH = () => winW() * 0.7;
 
-/* CHECK OVERLAP (looser than before) */
+/* CHECK OVERLAP */
 function isOverlapping(x, y) {
   return placed.some(p => {
     return !(
@@ -180,7 +180,7 @@ function isOverlapping(x, y) {
   });
 }
 
-/* RANDOM POSITION GENERATOR */
+/* RANDOM POSITION */
 function getRandomPosition() {
   let x, y, attempts = 0;
 
@@ -246,7 +246,7 @@ function focusWindow(target) {
   });
 }
 
-/* RESET ON BACKGROUND CLICK */
+/* RESET */
 document.body.addEventListener("click", () => {
   windows.forEach(win => {
     const video = win.querySelector("video");
@@ -259,6 +259,24 @@ document.body.addEventListener("click", () => {
   });
 });
 </script>
-  
+
+<!-- MOBILE AUTOPLAY FIX (background video) -->
+<script>
+  const bgVideo = document.querySelector('.hero-background video');
+
+  if (bgVideo) {
+    bgVideo.muted = true;
+    bgVideo.setAttribute('muted', '');
+
+    const tryPlay = () => {
+      bgVideo.play().catch(() => {});
+    };
+
+    tryPlay();
+
+    document.addEventListener('touchstart', tryPlay, { once: true });
+  }
+</script>
+
 </body>
 </html>
